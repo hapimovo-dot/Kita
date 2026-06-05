@@ -1,4 +1,4 @@
-
+[index.html](https://github.com/user-attachments/files/28649686/index.html)
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -13,7 +13,7 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F5F5F7;color:#1D1D1F;min-height:100vh}
 .app{max-width:680px;margin:0 auto;padding:1rem}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:0.75rem 1rem;background:#fff;border:1px solid #E5E5EA;border-radius:14px;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
-.appname{font-size:15px;font-weight:600}
+.appname{font-size:15px;font-weight:600;color:#1D1D1F}
 .lang-toggle{display:flex;gap:4px}
 .lang-btn{padding:4px 10px;font-size:12px;border:1px solid #C7C7CC;border-radius:8px;cursor:pointer;background:transparent;color:#6E6E73}
 .lang-btn.active{background:#F2F2F7;color:#1D1D1F;font-weight:500}
@@ -29,7 +29,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn-primary:active{background:#3A3A3C}
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem}
 .stat-card{background:#fff;border-radius:12px;padding:0.75rem;text-align:center;border:1px solid #E5E5EA}
-.stat-num{font-size:22px;font-weight:600}
+.stat-num{font-size:22px;font-weight:600;color:#1D1D1F}
 .stat-label{font-size:11px;color:#6E6E73;margin-top:2px}
 .section-card{background:#fff;border:1px solid #E5E5EA;border-radius:14px;margin-bottom:0.75rem;overflow:hidden}
 .section-header{display:flex;align-items:center;justify-content:space-between;padding:0.85rem 1rem;cursor:pointer;user-select:none}
@@ -41,9 +41,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .section-body.open{display:block}
 .item-row{padding:8px 0;border-bottom:1px solid #F2F2F7}
 .item-row:last-child{border-bottom:none}
-.item-top{display:flex;align-items:flex-start;gap:10px}
-.item-text{flex:1;font-size:13px;line-height:1.5}
 .item-row.observed .item-text{color:#AEAEB2}
+.item-top{display:flex;align-items:flex-start;gap:10px}
+.item-text{flex:1;font-size:13px;line-height:1.5;color:#1D1D1F}
 .item-controls{display:flex;gap:4px;flex-shrink:0;margin-top:1px}
 .status-btn{padding:3px 9px;font-size:11px;border:1px solid #E5E5EA;border-radius:8px;cursor:pointer;background:#fff;color:#6E6E73;font-weight:500}
 .status-btn.ja{background:#D1F2D9;color:#1A7F3C;border-color:#A8E6B8}
@@ -54,22 +54,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .filter-lbl{font-size:12px;color:#6E6E73}
 .filter-btn{padding:4px 12px;font-size:12px;border:1px solid #E5E5EA;border-radius:20px;cursor:pointer;background:#fff;color:#6E6E73}
 .filter-btn.active{background:#F2F2F7;color:#1D1D1F;font-weight:500}
-.report-card{background:#fff;border:1px solid #E5E5EA;border-radius:14px;padding:1rem;margin-bottom:0.75rem}
-.report-card h3{font-size:14px;font-weight:500;margin-bottom:0.75rem;color:#1D1D1F}
-.report-out{background:#F9F9F9;border-radius:10px;padding:1rem;font-size:13px;line-height:1.8;white-space:pre-wrap;color:#1D1D1F;border:1px solid #E5E5EA;margin-top:0.75rem;min-height:60px}
-.report-btns{display:flex;gap:8px;flex-wrap:wrap}
-.obs-input-card{background:#fff;border:1px solid #E5E5EA;border-radius:14px;padding:1rem;margin-bottom:0.75rem}
-.obs-input-card h3{font-size:14px;font-weight:500;margin-bottom:0.5rem}
-.obs-input-card p{font-size:12px;color:#6E6E73;margin-bottom:0.75rem;line-height:1.5}
-.obs-textarea{width:100%;font-size:14px;padding:10px;border:1px solid #E5E5EA;border-radius:10px;background:#F9F9F9;color:#1D1D1F;resize:vertical;min-height:80px;font-family:inherit;margin-bottom:8px}
-.match-result{background:#F9F9F9;border:1px solid #E5E5EA;border-radius:10px;padding:0.85rem;margin-top:0.75rem}
-.match-item{padding:6px 0;border-bottom:1px solid #F2F2F7;font-size:13px;display:flex;align-items:flex-start;gap:8px}
-.match-item:last-child{border-bottom:none}
-.match-domain{font-size:11px;color:#6E6E73;margin-bottom:2px}
-.match-text{font-size:13px;color:#1D1D1F;flex:1}
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:100;align-items:flex-end;justify-content:center}
+.ai-panel{background:#fff;border:1px solid #E5E5EA;border-radius:14px;padding:1rem}
+.ai-input{width:100%;font-size:14px;padding:10px;border:1px solid #E5E5EA;border-radius:10px;background:#F9F9F9;color:#1D1D1F;resize:vertical;min-height:90px;margin-bottom:10px;font-family:inherit}
+.ai-btns{display:flex;gap:8px;flex-wrap:wrap}
+.ai-result{background:#F9F9F9;border-radius:10px;padding:0.85rem;font-size:13px;line-height:1.65;margin-top:0.85rem;white-space:pre-wrap;color:#1D1D1F;border:1px solid #E5E5EA}
+.report-out{background:#F9F9F9;border-radius:10px;padding:1rem;font-size:13px;line-height:1.8;white-space:pre-wrap;margin-top:0.85rem;color:#1D1D1F;border:1px solid #E5E5EA}
+.info-box{padding:0.6rem 0.85rem;background:#F2F2F7;border-left:3px solid #C7C7CC;border-radius:0 8px 8px 0;font-size:12px;color:#6E6E73;margin-bottom:0.85rem;line-height:1.5}
+.report-btns{display:flex;gap:8px;margin-bottom:0.75rem;flex-wrap:wrap}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:100;align-items:flex-end;justify-content:center;padding:0}
 .modal-bg.open{display:flex}
-.modal{background:#fff;border-radius:20px 20px 0 0;padding:1.5rem 1.25rem 2rem;width:100%;max-width:680px;border-top:1px solid #E5E5EA}
+.modal{background:#fff;border-radius:20px 20px 0 0;padding:1.5rem 1.25rem 2rem;width:100%;max-width:680px;border:1px solid #E5E5EA}
 @media(min-width:500px){.modal-bg{align-items:center}.modal{border-radius:20px;max-width:360px}}
 .modal h3{font-size:16px;font-weight:600;margin-bottom:1rem}
 .modal-field{margin-bottom:12px}
@@ -78,13 +72,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .dob-row{display:flex;gap:8px}
 .dob-row select{flex:1}
 .modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:1rem}
-.empty-state{padding:0.85rem 0;font-size:13px;color:#6E6E73;line-height:1.5}
-.legend{display:flex;gap:10px;font-size:11px;color:#6E6E73;margin-bottom:0.75rem;flex-wrap:wrap}
-.legend-item{display:flex;align-items:center;gap:4px}
-.legend-dot{width:10px;height:10px;border-radius:3px}
-.dot-ja{background:#D1F2D9}
-.dot-manchmal{background:#FFF3D6}
-.dot-nein{background:#FFE5E5}
+.loading-spinner{display:inline-block;width:14px;height:14px;border:2px solid #E5E5EA;border-top-color:#1D1D1F;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.missing-body{padding:0.85rem 0;font-size:13px;color:#6E6E73;line-height:1.5}
 </style>
 </head>
 <body>
@@ -110,11 +100,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
   <div class="tabs">
     <button class="tab active" onclick="switchTab('observe')" id="tab-observe">Beobachtung</button>
-    <button class="tab" onclick="switchTab('match')" id="tab-match">Notiz → Kompetenz</button>
+    <button class="tab" onclick="switchTab('ai')" id="tab-ai">KI-Assistent</button>
     <button class="tab" onclick="switchTab('report')" id="tab-report">Bericht</button>
   </div>
 
-  <!-- BEOBACHTUNG -->
   <div class="panel active" id="panel-observe">
     <div class="filter-bar">
       <span class="filter-lbl" id="filter-lbl">Anzeigen:</span>
@@ -122,59 +111,44 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <button class="filter-btn" onclick="setFilter('pending')" id="f-pending">Noch nicht</button>
       <button class="filter-btn" onclick="setFilter('done')" id="f-done">Beobachtet</button>
     </div>
-    <div class="legend">
-      <span class="legend-item"><span class="legend-dot dot-ja"></span><span id="leg-ja">Ja</span></span>
-      <span class="legend-item"><span class="legend-dot dot-manchmal"></span><span id="leg-manchmal">Manchmal</span></span>
-      <span class="legend-item"><span class="legend-dot dot-nein"></span><span id="leg-nein">Nein / Noch nicht</span></span>
-    </div>
     <div id="sections-container"></div>
   </div>
 
-  <!-- NOTIZ MATCH -->
-  <div class="panel" id="panel-match">
-    <div class="obs-input-card">
-      <h3 id="match-title">Notiz eingeben</h3>
-      <p id="match-desc">Beschreibe kurz was du beobachtet hast. Das System sucht die passenden Kompetenzen aus der Liste.</p>
-      <textarea class="obs-textarea" id="match-input" id="match-input" placeholder="z.B. hat heute anderen Kindern beim Aufräumen geholfen..."></textarea>
-      <button class="btn btn-primary" onclick="doMatch()" id="btn-match">Passende Kompetenzen finden</button>
-      <div class="match-result" id="match-result" style="display:none"></div>
+  <div class="panel" id="panel-ai">
+    <div class="ai-panel">
+      <div class="info-box" id="ai-info">Beschreiben Sie eine Beobachtung – die KI findet passende Kompetenzen und formuliert professionellen Text.</div>
+      <textarea class="ai-input" id="ai-input" placeholder="z.B. heute hat sie anderen Kindern beim Aufräumen geholfen..."></textarea>
+      <div class="ai-btns">
+        <button class="btn btn-primary" onclick="aiMatch()" id="btn-ai-match">Kompetenz zuordnen ↗</button>
+        <button class="btn" onclick="aiProfessionalize()" id="btn-ai-prof">Professionalisieren ↗</button>
+      </div>
+      <div class="ai-result" id="ai-result" style="display:none"></div>
     </div>
   </div>
 
-  <!-- BERICHT -->
   <div class="panel" id="panel-report">
-    <div class="report-card">
-      <h3 id="rep-title-de">Bericht auf Deutsch</h3>
-      <div class="report-btns">
-        <button class="btn btn-primary" onclick="generateReport('de')" id="btn-rep-de">Generieren</button>
-        <button class="btn" onclick="copyReport('report-de')" id="btn-copy-de">Kopieren</button>
-      </div>
-      <div class="report-out" id="report-de" style="display:none"></div>
+    <div class="report-btns">
+      <button class="btn btn-primary" onclick="generateReport('de')" id="btn-rep-de">Bericht DE ↗</button>
+      <button class="btn" onclick="generateReport('zh')" id="btn-rep-zh">中文報告 ↗</button>
+      <button class="btn" onclick="copyReport()" id="btn-copy">Kopieren</button>
     </div>
-    <div class="report-card">
-      <h3 id="rep-title-zh">中文報告</h3>
-      <div class="report-btns">
-        <button class="btn btn-primary" onclick="generateReport('zh')" id="btn-rep-zh">生成報告</button>
-        <button class="btn" onclick="copyReport('report-zh')" id="btn-copy-zh">複製</button>
-      </div>
-      <div class="report-out" id="report-zh" style="display:none"></div>
-    </div>
+    <div class="report-out" id="report-out" style="display:none"></div>
   </div>
 </div>
 
 <!-- MODAL -->
 <div class="modal-bg" id="modal-bg">
   <div class="modal">
-    <h3 id="modal-title">Neues Kind</h3>
+    <h3 id="modal-title">Neues Kind hinzufügen</h3>
     <div class="modal-field">
       <label id="lbl-name">Name</label>
-      <input type="text" id="child-name-input" />
+      <input type="text" id="child-name-input" placeholder="z.B. Lena M." />
     </div>
     <div class="modal-field">
       <label id="lbl-dob">Geburtsdatum (Monat / Jahr)</label>
       <div class="dob-row">
-        <select id="dob-month"><option value="">–</option></select>
-        <select id="dob-year"><option value="">–</option></select>
+        <select id="dob-month"><option value="">Monat</option></select>
+        <select id="dob-year"><option value="">Jahr</option></select>
       </div>
     </div>
     <div class="modal-btns">
@@ -186,64 +160,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <script>
 const TR={
-  de:{
-    appname:"🌱 Kita Beobachtung",addChild:"+ Kind",
-    observe:"Beobachtung",match:"Notiz → Kompetenz",report:"Bericht",
-    filterAll:"Alle",filterPending:"Noch nicht",filterDone:"Beobachtet",filterLbl:"Anzeigen:",
-    legJa:"Ja",legManchmal:"Manchmal",legNein:"Nein / Noch nicht",
-    statTotal:"Kompetenzen",statDone:"Beobachtet",statPct:"Fortschritt",
-    matchTitle:"Notiz eingeben",
-    matchDesc:"Beschreibe kurz was du beobachtet hast. Das System sucht die passenden Kompetenzen.",
-    matchPlaceholder:"z.B. hat heute anderen Kindern beim Aufräumen geholfen...",
-    btnMatch:"Passende Kompetenzen finden",
-    noMatch:"Keine passenden Kompetenzen gefunden. Versuche andere Begriffe.",
-    repTitleDe:"Bericht auf Deutsch",repTitleZh:"中文報告",
-    btnGenDe:"Generieren",btnCopyDe:"Kopieren",btnGenZh:"生成報告",btnCopyZh:"複製",
-    modalTitle:"Neues Kind",lblName:"Name",lblDob:"Geburtsdatum (Monat / Jahr)",
-    cancel:"Abbrechen",save:"Speichern",
-    selectChild:"Kind auswählen...",noChild:"Kein Kind ausgewählt",
-    notePlaceholder:"Bemerkung...",
-    months:["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"],
-    allDone:"Alle Kompetenzen bereits beobachtet ✓",
-    noneYet:"Noch keine Beobachtungen.",
-    missingArea:"⚠️ Dieser Bereich fehlt in der PDF – wird ergänzt sobald verfügbar.",
-    pending:"待補充",
-    reportIntro:(name,dob)=>`Entwicklungsbericht – ${name}${dob?' (geb. '+dob+')':''}\n${'─'.repeat(40)}\n\n`,
-    reportSection:(area,items)=>`${area}\n${items.map(i=>`  • ${i.item}${i.note?' → '+i.note:''}`).join('\n')}\n`,
-    reportNote:"\n─────────────────────────────────────\nDieser Bericht wurde mit dem Kita Beobachtungssystem erstellt.",
-    noObs:"Noch keine Beobachtungen vorhanden."
-  },
-  zh:{
-    appname:"🌱 幼兒園觀察系統",addChild:"+ 新增",
-    observe:"觀察記錄",match:"筆記 → 能力",report:"報告",
-    filterAll:"全部",filterPending:"未觀察",filterDone:"已觀察",filterLbl:"顯示：",
-    legJa:"已具備",legManchmal:"有時候",legNein:"尚未",
-    statTotal:"能力項目",statDone:"已觀察",statPct:"進度",
-    matchTitle:"輸入觀察筆記",
-    matchDesc:"簡單描述你觀察到的情況，系統會從能力列表中找出對應項目。",
-    matchPlaceholder:"例如：今天她主動幫其他小朋友整理玩具…",
-    btnMatch:"找出對應能力",
-    noMatch:"找不到對應的能力項目，請嘗試不同的描述。",
-    repTitleDe:"德文報告",repTitleZh:"中文報告",
-    btnGenDe:"生成",btnCopyDe:"複製",btnGenZh:"生成報告",btnCopyZh:"複製",
-    modalTitle:"新增兒童",lblName:"姓名",lblDob:"出生年月",
-    cancel:"取消",save:"儲存",
-    selectChild:"選擇兒童...",noChild:"尚未選擇兒童",
-    notePlaceholder:"備注...",
-    months:["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],
-    allDone:"所有能力已觀察完畢 ✓",
-    noneYet:"尚無觀察記錄。",
-    missingArea:"⚠️ 此領域在 PDF 中缺失，待補充。",
-    pending:"待補充",
-    reportIntro:(name,dob)=>`發展觀察報告 – ${name}${dob?' (生：'+dob+')':''}\n${'─'.repeat(30)}\n\n`,
-    reportSection:(area,items)=>`【${area}】\n${items.map(i=>`  • ${i.item}${i.note?' → '+i.note:''}`).join('\n')}\n`,
-    reportNote:"\n─────────────────────────\n本報告由幼兒園觀察系統自動整理。",
-    noObs:"尚無觀察記錄。"
-  }
+  de:{appname:"🌱 Kita Beobachtung",addChild:"+ Kind",observe:"Beobachtung",ai:"KI-Assistent",report:"Bericht",filterAll:"Alle",filterPending:"Noch nicht",filterDone:"Beobachtet",filterLbl:"Anzeigen:",statTotal:"Kompetenzen",statDone:"Beobachtet",statPct:"Fortschritt",aiInfo:"Beschreiben Sie eine Beobachtung – die KI findet passende Kompetenzen und formuliert professionellen Text.",aiPlaceholder:"z.B. heute hat sie anderen Kindern beim Aufräumen geholfen...",aiMatch:"Kompetenz zuordnen ↗",aiProf:"Professionalisieren ↗",repDe:"Bericht DE ↗",repZh:"中文報告 ↗",copy:"Kopieren",modalTitle:"Neues Kind hinzufügen",lblName:"Name",lblDob:"Geburtsdatum (Monat / Jahr)",cancel:"Abbrechen",save:"Speichern",selectChild:"Kind auswählen...",noChild:"Kein Kind ausgewählt",notePlaceholder:"Bemerkung...",months:["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"]},
+  zh:{appname:"🌱 幼兒園觀察系統",addChild:"+ 新增",observe:"觀察記錄",ai:"AI 助理",report:"報告",filterAll:"全部",filterPending:"未觀察",filterDone:"已觀察",filterLbl:"顯示：",statTotal:"能力項目",statDone:"已觀察",statPct:"進度",aiInfo:"輸入觀察描述，AI 會找出對應能力項目並改寫成專業教師文字。",aiPlaceholder:"例如：今天她主動幫其他小朋友整理玩具…",aiMatch:"比對能力項目 ↗",aiProf:"專業化改寫 ↗",repDe:"德文報告 ↗",repZh:"中文報告 ↗",copy:"複製",modalTitle:"新增兒童",lblName:"姓名",lblDob:"出生年月",cancel:"取消",save:"儲存",selectChild:"選擇兒童...",noChild:"尚未選擇兒童",notePlaceholder:"備注...",months:["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"]}
 };
 
 const DOMAINS=[
-  {id:"NUT",de:"Natur · Umwelt · Technik",zh:"自然・環境・技術",keywords:["natur","tier","pflanz","technik","experiment","forschen","wetter","jahreszeit","umwelt","bauen","konstruier","自然","動物","植物","技術","實驗","探究","天氣","季節","環境","建造"],items:[
+  {id:"NUT",de:"Natur · Umwelt · Technik",zh:"自然・環境・技術",items:[
     {id:"NUT01",de:"Neugierig und aufmerksam sein, Interesse an seiner Umwelt zeigen",zh:"對環境充滿好奇心，對動植物、科技、自然現象感興趣"},
     {id:"NUT02",de:"Dazu Fragen stellen",zh:"主動提問"},
     {id:"NUT03",de:"Mit Freude und Ausdauer Dinge untersuchen – allein oder in der Gruppe",zh:"獨自或與他人一起持續探索事物"},
@@ -265,7 +187,7 @@ const DOMAINS=[
     {id:"NUT19",de:"Ursachen und Folgen für Umweltverschmutzung kennen",zh:"了解環境污染的原因與後果"},
     {id:"NUT20",de:"Gefahren beim Umgang mit Natur und Technik kennen",zh:"認識接觸自然和技術時的安全危險"}
   ]},
-  {id:"SOZ",de:"Soziales · Kulturelles Leben · Emotionales Verhalten",zh:"社會文化生活與情緒行為",keywords:["spiel","freund","teilen","hilf","tröst","gefühl","emotion","regel","konflikt","gruppe","社交","朋友","分享","幫助","安慰","感受","情緒","規則","衝突","團體","合作","遊戲"],items:[
+  {id:"SOZ",de:"Soziales · Kulturelles Leben · Emotionales Verhalten",zh:"社會文化生活與情緒行為",items:[
     {id:"SOZ01",de:"Lachen, lautieren, Blickkontakt halten, freudige Bewegungen zeigen",zh:"微笑、發聲、保持眼神接觸、表現愉快的動作"},
     {id:"SOZ02",de:"Neugierig und offen sein",zh:"好奇心強、開放"},
     {id:"SOZ03",de:"Bring- und Abholsituation bewältigen",zh:"能適應接送情況"},
@@ -312,7 +234,7 @@ const DOMAINS=[
     {id:"SOZ44",de:"Kinderrechte kennen und für sich eintreten",zh:"了解兒童權利並敢於維護"},
     {id:"SOZ45",de:"Eingreifen, wenn jemand geärgert wird",zh:"當有人受欺負時敢於介入"}
   ]},
-  {id:"MAT",de:"Mathematik",zh:"數學",keywords:["zahl","zählen","form","groß","klein","mehr","weniger","menge","muster","sort","geomet","數字","數數","形狀","大","小","多","少","數量","圖案","排序","幾何"],items:[
+  {id:"MAT",de:"Mathematik",zh:"數學",items:[
     {id:"MAT01",de:"Objektpermanenz verstehen",zh:"理解物體恆存"},
     {id:"MAT02",de:"Freude am Sortieren, Muster legen",zh:"喜歡排序和製作圖案"},
     {id:"MAT03",de:"Groß/Klein, keine/viele verstehen",zh:"理解大/小、沒有/很多"},
@@ -341,7 +263,7 @@ const DOMAINS=[
     {id:"MAT26",de:"Zahlensymbole kennen (verschiedener Kulturen)",zh:"認識數字符號（不同文化）"},
     {id:"MAT27",de:"Subtrahieren können",zh:"能做減法"}
   ]},
-  {id:"GES",de:"Gesundheit · Motorik · Wahrnehmung",zh:"健康・動作・感知",keywords:["lauf","spring","klett","ball","gleichgewicht","essen","trinken","zähne","körper","健康","跑","跳","爬","球","平衡","吃","喝","牙齒","身體","動作","感知"],items:[
+  {id:"GES",de:"Gesundheit · Motorik · Wahrnehmung",zh:"健康・動作・感知",items:[
     {id:"GES01",de:"Frei sitzen mit sicherer Gleichgewichtskontrolle",zh:"能安全地自行坐立並保持平衡"},
     {id:"GES02",de:"Kriechen, robben oder krabbeln",zh:"能爬行"},
     {id:"GES03",de:"Frei gehen und Gleichgewicht kontrollieren",zh:"能自由行走並控制平衡"},
@@ -384,7 +306,7 @@ const DOMAINS=[
     {id:"GES40",de:"Gemeinsame Mahlzeiten genießen, Speisen auswählen",zh:"享受共同用餐，能選擇食物"},
     {id:"GES41",de:"Vielfältige Nahrungsmittel kennen, gesunde von ungesunden unterscheiden",zh:"認識各種食物，區分健康與不健康食品"}
   ]},
-  {id:"KUN",de:"Kunst · Musik · Theaterspiel",zh:"藝術・音樂・戲劇遊戲",keywords:["mal","zeichen","musik","sing","tanz","theater","basteln","farbe","kunst","畫","音樂","唱歌","跳舞","戲劇","手工","顏色","藝術","扮演"],items:[
+  {id:"KUN",de:"Kunst · Musik · Theaterspiel",zh:"藝術・音樂・戲劇遊戲",items:[
     {id:"KUN01",de:"Freude am künstlerischen Gestalten",zh:"喜歡藝術創作"},
     {id:"KUN02",de:"Befindet sich in der Kritzelphase",zh:"處於塗鴉階段"},
     {id:"KUN03",de:"Malt Menschen als Kopffüßler",zh:"畫蝌蚪人（頭腳人）"},
@@ -413,8 +335,10 @@ const DOMAINS=[
     {id:"KUN26",de:"Als-Ob-Spiel: neue Welten mit Fantasie entwickeln",zh:"能用想像力創造「假裝世界」"},
     {id:"KUN27",de:"Gemeinsam Szenen und Geschichten darstellen, kooperieren",zh:"能共同表演場景，合作配合"}
   ]},
-  {id:"SPR",de:"Sprache · Kommunikation",zh:"語言・溝通",missing:true,items:[],keywords:[]},
-  {id:"KOG",de:"Kognitive Entwicklung",zh:"認知發展",missing:true,items:[],keywords:[]}
+  {id:"SPR",de:"Sprache · Kommunikation",zh:"語言・溝通",missing:true,items:[],
+    missingNote:{de:"⚠️ Dieser Bereich fehlt in der PDF – wird ergänzt sobald verfügbar.",zh:"⚠️ 此領域在 PDF 中缺失，待補充。"}},
+  {id:"KOG",de:"Kognitive Entwicklung",zh:"認知發展",missing:true,items:[],
+    missingNote:{de:"⚠️ Dieser Bereich fehlt in der PDF – wird ergänzt sobald verfügbar.",zh:"⚠️ 此領域在 PDF 中缺失，待補充。"}}
 ];
 
 let lang='de';
@@ -433,15 +357,17 @@ function t(k){return TR[lang][k]||k}
 })();
 
 function buildMonths(){
-  const sel=document.getElementById('dob-month');const cur=sel.value;
-  sel.innerHTML='<option value="">–</option>';
+  const sel=document.getElementById('dob-month');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">'+t('filterAll').replace('Alle','Monat').replace('全部','月份')+'</option>';
   TR[lang].months.forEach((m,i)=>{const o=document.createElement('option');o.value=String(i+1).padStart(2,'0');o.textContent=m;sel.appendChild(o);});
   sel.value=cur;
 }
 
 function formatDob(m,y){
   if(!m&&!y) return '';
-  return [m?TR[lang].months[parseInt(m)-1]:'',y].filter(Boolean).join(' ');
+  const mname=m?TR[lang].months[parseInt(m)-1]:'';
+  return [mname,y].filter(Boolean).join(' ');
 }
 
 function setLang(l){
@@ -454,28 +380,22 @@ function applyLang(){
   document.getElementById('appname').textContent=t('appname');
   document.getElementById('btn-add-child').textContent=t('addChild');
   document.getElementById('tab-observe').textContent=t('observe');
-  document.getElementById('tab-match').textContent=t('match');
+  document.getElementById('tab-ai').textContent=t('ai');
   document.getElementById('tab-report').textContent=t('report');
   document.getElementById('filter-lbl').textContent=t('filterLbl');
   document.getElementById('f-all').textContent=t('filterAll');
   document.getElementById('f-pending').textContent=t('filterPending');
   document.getElementById('f-done').textContent=t('filterDone');
-  document.getElementById('leg-ja').textContent=t('legJa');
-  document.getElementById('leg-manchmal').textContent=t('legManchmal');
-  document.getElementById('leg-nein').textContent=t('legNein');
   document.getElementById('stat-total-lbl').textContent=t('statTotal');
   document.getElementById('stat-done-lbl').textContent=t('statDone');
   document.getElementById('stat-pct-lbl').textContent=t('statPct');
-  document.getElementById('match-title').textContent=t('matchTitle');
-  document.getElementById('match-desc').textContent=t('matchDesc');
-  document.getElementById('match-input').placeholder=t('matchPlaceholder');
-  document.getElementById('btn-match').textContent=t('btnMatch');
-  document.getElementById('rep-title-de').textContent=t('repTitleDe');
-  document.getElementById('rep-title-zh').textContent=t('repTitleZh');
-  document.getElementById('btn-rep-de').textContent=t('btnGenDe');
-  document.getElementById('btn-copy-de').textContent=t('btnCopyDe');
-  document.getElementById('btn-rep-zh').textContent=t('btnGenZh');
-  document.getElementById('btn-copy-zh').textContent=t('btnCopyZh');
+  document.getElementById('ai-info').textContent=t('aiInfo');
+  document.getElementById('ai-input').placeholder=t('aiPlaceholder');
+  document.getElementById('btn-ai-match').textContent=t('aiMatch');
+  document.getElementById('btn-ai-prof').textContent=t('aiProf');
+  document.getElementById('btn-rep-de').textContent=t('repDe');
+  document.getElementById('btn-rep-zh').textContent=t('repZh');
+  document.getElementById('btn-copy').textContent=t('copy');
   document.getElementById('modal-title').textContent=t('modalTitle');
   document.getElementById('lbl-name').textContent=t('lblName');
   document.getElementById('lbl-dob').textContent=t('lblDob');
@@ -489,8 +409,7 @@ function renderChildSelect(){
   sel.innerHTML='<option value="">'+t('selectChild')+'</option>';
   children.forEach(c=>{
     const opt=document.createElement('option');opt.value=c.id;
-    const dob=formatDob(c.dobMonth,c.dobYear);
-    opt.textContent=c.name+(dob?' ('+dob+')':'');
+    opt.textContent=c.name+(formatDob(c.dobMonth,c.dobYear)?' ('+formatDob(c.dobMonth,c.dobYear)+')':'');
     if(currentChild&&currentChild.id===c.id) opt.selected=true;
     sel.appendChild(opt);
   });
@@ -507,10 +426,10 @@ function saveStorage(){localStorage.setItem('kita_obs',JSON.stringify(observatio
 
 function toggleStatus(itemId,status){
   if(!currentChild) return;
-  if(!observations[currentChild.id]) observations[currentChild.id]={};
   const ex=getObs(currentChild.id,itemId);
   const noteEl=document.getElementById('note-'+itemId);
   const note=noteEl?noteEl.value:'';
+  if(!observations[currentChild.id]) observations[currentChild.id]={};
   if(ex&&ex.status===status) delete observations[currentChild.id][itemId];
   else observations[currentChild.id][itemId]={status,note,ts:Date.now()};
   saveStorage();renderSections();updateStats();
@@ -543,7 +462,8 @@ function setFilter(f){
 function toggleSection(id){openSections[id]=!openSections[id];renderSections();}
 
 function renderSections(){
-  const container=document.getElementById('sections-container');container.innerHTML='';
+  const container=document.getElementById('sections-container');
+  container.innerHTML='';
   DOMAINS.forEach(domain=>{
     const card=document.createElement('div');card.className='section-card';
     let dc=0;
@@ -554,12 +474,12 @@ function renderSections(){
     header.onclick=()=>toggleSection(domain.id);
     const bc=dc>0&&dc===domain.items.length&&!domain.missing?'section-badge done':'section-badge';
     header.innerHTML=`<span class="section-title">${domain[lang]}${domain.missing?' ⚠️':''}
-      <span class="${bc}">${domain.missing?t('pending'):dc+'/'+domain.items.length}</span></span>
+      <span class="${bc}">${domain.missing?'待補充':dc+'/'+domain.items.length}</span></span>
       <span class="chevron" style="transform:${isOpen?'rotate(180deg)':''}">⌄</span>`;
     card.appendChild(header);
     const body=document.createElement('div');body.className='section-body'+(isOpen?' open':'');
     if(domain.missing){
-      const n=document.createElement('div');n.className='empty-state';n.textContent=t('missingArea');body.appendChild(n);
+      const n=document.createElement('div');n.className='missing-body';n.textContent=domain.missingNote[lang];body.appendChild(n);
     } else {
       let vis=0;
       domain.items.forEach(item=>{
@@ -585,71 +505,12 @@ function renderSections(){
         body.appendChild(row);
       });
       if(vis===0){
-        const e=document.createElement('div');e.className='empty-state';
-        e.textContent=filter==='pending'?t('allDone'):t('noneYet');
+        const e=document.createElement('div');e.className='missing-body';
+        e.textContent=filter==='pending'?(lang==='de'?'Alle Kompetenzen bereits beobachtet ✓':'所有能力已觀察完畢 ✓'):(lang==='de'?'Noch keine Beobachtungen.':'尚無觀察記錄。');
         body.appendChild(e);
       }
     }
     card.appendChild(body);container.appendChild(card);
-  });
-}
-
-// 關鍵字比對功能（不需要AI）
-function doMatch(){
-  const input=document.getElementById('match-input').value.trim().toLowerCase();
-  const resultEl=document.getElementById('match-result');
-  if(!input){resultEl.style.display='none';return;}
-  const matches=[];
-  DOMAINS.forEach(domain=>{
-    if(domain.missing) return;
-    domain.items.forEach(item=>{
-      const text=(item.de+' '+item.zh+' '+(domain.keywords||[]).join(' ')).toLowerCase();
-      const inputWords=input.split(/\s+/);
-      const score=inputWords.filter(w=>w.length>2&&text.includes(w)).length;
-      if(score>0) matches.push({domain:domain[lang],item:item[lang],id:item.id,score});
-    });
-  });
-  matches.sort((a,b)=>b.score-a.score);
-  const top=matches.slice(0,5);
-  resultEl.style.display='block';
-  if(top.length===0){resultEl.innerHTML=`<div class="empty-state">${t('noMatch')}</div>`;return;}
-  resultEl.innerHTML=top.map(m=>`
-    <div class="match-item">
-      <div style="flex:1">
-        <div class="match-domain">${m.domain}</div>
-        <div class="match-text">${m.item}</div>
-      </div>
-    </div>`).join('');
-}
-
-function generateReport(rl){
-  if(!currentChild){alert(t('noChild'));return;}
-  const obs=observations[currentChild.id]||{};
-  const observed=[];
-  DOMAINS.forEach(d=>d.items.forEach(item=>{
-    const o=obs[item.id];
-    if(o&&o.status==='ja') observed.push({area:d[rl==='zh'?'zh':'de'],item:item[rl==='zh'?'zh':'de'],note:o.note});
-  }));
-  const elId=rl==='de'?'report-de':'report-zh';
-  const out=document.getElementById(elId);
-  out.style.display='block';
-  if(!observed.length){out.textContent=t('noObs');return;}
-  const grp={};
-  observed.forEach(o=>{if(!grp[o.area]) grp[o.area]=[];grp[o.area].push(o);});
-  const dob=formatDob(currentChild.dobMonth,currentChild.dobYear);
-  let text=TR[rl].reportIntro(currentChild.name,dob);
-  Object.entries(grp).forEach(([area,items])=>{text+=TR[rl].reportSection(area,items)+'\n';});
-  text+=TR[rl].reportNote;
-  out.textContent=text;
-}
-
-function copyReport(elId){
-  const text=document.getElementById(elId).textContent;
-  if(!text) return;
-  navigator.clipboard.writeText(text).then(()=>{
-    const btnId=elId==='report-de'?'btn-copy-de':'btn-copy-zh';
-    const b=document.getElementById(btnId);const o=b.textContent;
-    b.textContent='✓';setTimeout(()=>b.textContent=o,1500);
   });
 }
 
@@ -673,6 +534,63 @@ function addChild(){
   const child={id:'c'+Date.now(),name,dobMonth:document.getElementById('dob-month').value,dobYear:document.getElementById('dob-year').value};
   children.push(child);localStorage.setItem('kita_children',JSON.stringify(children));
   currentChild=child;renderChildSelect();renderSections();updateStats();closeModal();
+}
+
+async function aiCall(prompt){
+  const r=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+  });
+  const d=await r.json();
+  return d.content.map(c=>c.text||'').join('');
+}
+
+async function aiMatch(){
+  const input=document.getElementById('ai-input').value.trim();if(!input) return;
+  const el=document.getElementById('ai-result');el.style.display='block';
+  el.innerHTML='<span class="loading-spinner"></span>'+(lang==='de'?'Analysiere...':'分析中...');
+  const items=DOMAINS.flatMap(d=>d.items.map(i=>i.id+': '+i[lang]));
+  const p=lang==='de'
+    ?`Du bist Experte für frühkindliche Bildung. Ordne folgende Beobachtung passenden Kompetenzen zu:\n\n${items.join('\n')}\n\nBeobachtung: "${input}"\n\nAntworte: 1) Passende Kompetenz-IDs und Namen 2) Professioneller Beobachtungstext 2-3 Sätze Deutsch.`
+    :`你是幼兒教育專家。將觀察與能力對應：\n\n${items.join('\n')}\n\n觀察：「${input}」\n\n回答：1) 對應能力ID和名稱 2) 2-3句專業教師觀察文字（繁體中文）。`;
+  try{el.textContent=await aiCall(p);}catch(e){el.textContent=lang==='de'?'Fehler.':'失敗。';}
+}
+
+async function aiProfessionalize(){
+  const input=document.getElementById('ai-input').value.trim();if(!input) return;
+  const el=document.getElementById('ai-result');el.style.display='block';
+  el.innerHTML='<span class="loading-spinner"></span>'+(lang==='de'?'Formuliere um...':'改寫中...');
+  const p=lang==='de'
+    ?`Formuliere in professionellen pädagogischen Beobachtungstext um. Fachsprache, objektiv, 3-4 Sätze Deutsch.\n\nNotiz: "${input}"`
+    :`改寫成專業教師觀察文字。幼兒教育術語，客觀，繁體中文3-4句。\n\n筆記：「${input}」`;
+  try{el.textContent=await aiCall(p);}catch(e){el.textContent=lang==='de'?'Fehler.':'失敗。';}
+}
+
+async function generateReport(rl){
+  if(!currentChild){alert(t('noChild'));return;}
+  const out=document.getElementById('report-out');out.style.display='block';
+  out.innerHTML='<span class="loading-spinner"></span>'+(lang==='de'?'Generiere...':'生成中...');
+  const obs=observations[currentChild.id]||{};
+  const observed=[];
+  DOMAINS.forEach(d=>d.items.forEach(item=>{
+    const o=obs[item.id];
+    if(o&&o.status==='ja') observed.push({area:d[rl==='zh'?'zh':'de'],item:item[rl==='zh'?'zh':'de'],note:o.note});
+  }));
+  if(!observed.length){out.textContent=rl==='de'?'Noch keine Beobachtungen.':'尚無觀察記錄。';return;}
+  const grp={};observed.forEach(o=>{if(!grp[o.area]) grp[o.area]=[];grp[o.area].push(o);});
+  const sum=Object.entries(grp).map(([a,its])=>a+':\n'+its.map(i=>'- '+i.item+(i.note?' ('+i.note+')':'')).join('\n')).join('\n\n');
+  const dob=formatDob(currentChild.dobMonth,currentChild.dobYear);
+  const ci=currentChild.name+(dob?' (geb. '+dob+')':'');
+  const p=rl==='de'
+    ?`Du bist Erzieherin in einer deutschen Kita. Erstelle professionellen Elterngespräch-Bericht für ${ci}. Fließende Absätze, Fachsprache, wertschätzend. Einleitung + Entwicklungsbereiche.\n\n${sum}`
+    :`你是德國幼兒園教師。為兒童 ${ci} 撰寫專業家長面談報告（繁體中文）。流暢段落，專業，正面具體。引言＋發展領域。\n\n${sum}`;
+  try{out.textContent=await aiCall(p);}catch(e){out.textContent=rl==='de'?'Fehler.':'失敗。';}
+}
+
+function copyReport(){
+  navigator.clipboard.writeText(document.getElementById('report-out').textContent).then(()=>{
+    const b=document.getElementById('btn-copy');const o=b.textContent;b.textContent='✓';setTimeout(()=>b.textContent=o,1500);
+  });
 }
 
 buildMonths();renderChildSelect();renderSections();updateStats();applyLang();
