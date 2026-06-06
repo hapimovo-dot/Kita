@@ -27,6 +27,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn:active{background:#F2F2F7}
 .btn-primary{background:#1D1D1F;color:#fff;border-color:#1D1D1F}
 .btn-primary:active{background:#3A3A3C}
+.btn-danger{background:#fff;color:#A32D2D;border-color:#FFBEBE}
+.btn-danger:active{background:#FFE5E5}
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem}
 .stat-card{background:#fff;border-radius:12px;padding:0.75rem;text-align:center;border:1px solid #E5E5EA}
 .stat-num{font-size:22px;font-weight:600}
@@ -86,6 +88,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .dob-row select{flex:1}
 .modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:1rem}
 .empty-state{padding:0.85rem 0;font-size:13px;color:#6E6E73;line-height:1.5}
+.confirm-box{background:#FFF5F5;border:1px solid #FFBEBE;border-radius:10px;padding:0.85rem;margin-bottom:1rem;font-size:13px;color:#A32D2D;line-height:1.5}
 .legend{display:flex;gap:10px;font-size:11px;color:#6E6E73;margin-bottom:0.75rem;flex-wrap:wrap}
 .legend-item{display:flex;align-items:center;gap:4px}
 .legend-dot{width:10px;height:10px;border-radius:3px}
@@ -98,13 +101,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <span class="appname" id="appname">🌱 Kita Beobachtung</span>
     <div class="lang-toggle">
       <button class="lang-btn active" onclick="setLang('de')">DE</button>
-      <button class="lang-btn" onclick="setLang('zh')">中文</button>
+      <button class="lang-btn" onclick="setLang('zh')">繁體</button>
+      <button class="lang-btn" onclick="setLang('cn')">简体</button>
     </div>
   </div>
 
   <div class="child-selector">
     <select id="childSelect" onchange="loadChild()"></select>
     <button class="btn btn-primary" onclick="openAddChild()" id="btn-add-child">+ Kind</button>
+    <button class="btn btn-danger" onclick="confirmDeleteChild()" id="btn-delete-child">✕</button>
   </div>
 
   <div class="stats-row">
@@ -200,6 +205,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
+<div class="modal-bg" id="modal-delete-bg">
+  <div class="modal">
+    <h3 id="modal-delete-title">Kind löschen?</h3>
+    <div class="confirm-box" id="modal-delete-msg"></div>
+    <div class="modal-btns">
+      <button class="btn" onclick="closeDeleteModal()" id="btn-delete-cancel">Abbrechen</button>
+      <button class="btn btn-danger" onclick="deleteChild()" id="btn-delete-confirm">Löschen</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const TR={
   de:{
@@ -233,7 +249,47 @@ const TR={
     },
     reportSection:(area,items)=>`${area}\n${items.map(i=>`  • ${i.item}${i.note?' → '+i.note:''}${i.date?' ('+i.date+')':''}`).join('\n')}\n`,
     reportNote:"\n─────────────────────────────────────────────\nErstellt mit dem Kita Beobachtungssystem.",
-    noObs:"Keine Beobachtungen im gewählten Zeitraum."
+    noObs:"Keine Beobachtungen im gewählten Zeitraum.",
+    deleteTitle:"Kind löschen?",
+    deleteMsg:(name)=>`Alle Beobachtungsdaten von „${name}" werden unwiderruflich gelöscht.`,
+    deleteBtnCancel:"Abbrechen",deleteBtnConfirm:"Löschen"
+  },
+
+  cn:{
+    appname:"🌱 幼儿园观察系统",addChild:"+ 新增",
+    observe:"观察记录",match:"笔记 → 能力",report:"报告",
+    filterAll:"全部",filterPending:"未观察",filterDone:"已观察",filterLbl:"显示：",
+    legJa:"已具备",legManchmal:"有时候",legNein:"尚未",
+    statTotal:"能力项目",statDone:"已观察",statPct:"进度",
+    matchTitle:"输入观察笔记",
+    matchDesc:"简单描述观察到的情况，系统会找出对应能力项目。",
+    matchPlaceholder:"例如：今天她主动帮其他小朋友整理玩具…",
+    btnMatch:"找出对应能力",
+    noMatch:"找不到对应项目，请尝试不同描述。",
+    repSettingsTitle:"设置",
+    lblRepChild:"选择儿童",
+    lblFrom:"从",lblTo:"到",
+    repTitleDe:"德文报告",repTitleZh:"中文报告",
+    btnGenDe:"生成",btnCopyDe:"复制",
+    btnGenZh:"生成报告",btnCopyZh:"复制",
+    modalTitle:"新增儿童",lblName:"姓名",lblDob:"出生年月",
+    cancel:"取消",save:"保存",
+    selectChild:"选择儿童...",noChild:"请先选择儿童",
+    notePlaceholder:"备注...",
+    months:["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],
+    allDone:"所有能力已观察完毕 ✓",noneYet:"尚无观察记录。",
+    missingArea:"⚠️ 此领域在 PDF 中缺失，待补充。",
+    pending:"待补充",
+    reportIntro:(name,dob,from,to)=>{
+      const period=from||to?`\n观察期间：${from||'–'} 至 ${to||'–'}`:'';
+      return `发展观察报告\n儿童：${name}${dob?' (生：'+dob+')':''}${period}\n${'─'.repeat(30)}\n\n`;
+    },
+    reportSection:(area,items)=>`【${area}】\n${items.map(i=>`  • ${i.item}${i.note?' → '+i.note:''}${i.date?' ('+i.date+')':''}`).join('\n')}\n`,
+    reportNote:"\n─────────────────────────\n本报告由幼儿园观察系统整理。",
+    noObs:"选定期间内没有观察记录。",
+    deleteTitle:"删除儿童？",
+    deleteMsg:(name)=>`「${name}」的所有观察资料将被永久删除。`,
+    deleteBtnCancel:"取消",deleteBtnConfirm:"删除"
   },
   zh:{
     appname:"🌱 幼兒園觀察系統",addChild:"+ 新增",
@@ -266,183 +322,186 @@ const TR={
     },
     reportSection:(area,items)=>`【${area}】\n${items.map(i=>`  • ${i.item}${i.note?' → '+i.note:''}${i.date?' ('+i.date+')':''}`).join('\n')}\n`,
     reportNote:"\n─────────────────────────\n本報告由幼兒園觀察系統整理。",
-    noObs:"選定期間內沒有觀察記錄。"
+    noObs:"選定期間內沒有觀察記錄。",
+    deleteTitle:"刪除兒童？",
+    deleteMsg:(name)=>`「${name}」的所有觀察資料將被永久刪除。`,
+    deleteBtnCancel:"取消",deleteBtnConfirm:"刪除"
   }
 };
 
 const DOMAINS=[
-  {id:"NUT",de:"Natur · Umwelt · Technik",zh:"自然・環境・技術",keywords:["natur","tier","pflanz","technik","experiment","forschen","wetter","jahreszeit","umwelt","bauen","自然","動物","植物","技術","實驗","探究","天氣","季節","環境","建造"],items:[
-    {id:"NUT01",de:"Neugierig und aufmerksam sein, Interesse an seiner Umwelt zeigen",zh:"對環境充滿好奇心，對動植物、科技、自然現象感興趣"},
-    {id:"NUT02",de:"Dazu Fragen stellen",zh:"主動提問"},
-    {id:"NUT03",de:"Mit Freude und Ausdauer Dinge untersuchen – allein oder in der Gruppe",zh:"獨自或與他人一起持續探索事物"},
-    {id:"NUT04",de:"Naturbegriffe kennen (Tiere, Pflanzen)",zh:"認識自然相關詞彙（動植物）"},
-    {id:"NUT05",de:"Dinge aus der Natur nach Kategorien ordnen",zh:"對自然物品進行分類整理"},
-    {id:"NUT06",de:"Fundstücke aus der Natur sammeln",zh:"收集自然物品"},
-    {id:"NUT07",de:"Naturereignisse kennen (Wetter, Jahreszeiten)",zh:"認識天氣與四季等自然現象"},
-    {id:"NUT08",de:"Technische Einrichtungen kennen",zh:"認識生活中的技術設施"},
-    {id:"NUT09",de:"Technische Geräte bedienen können",zh:"能操作技術設備"},
-    {id:"NUT10",de:"Bauwerke oder Maschinen konstruieren",zh:"能建造或組裝結構與機器"},
-    {id:"NUT11",de:"Lust am Forschen und Experimentieren",zh:"喜歡探究和實驗"},
-    {id:"NUT12",de:"Erklärungsversuche machen, Vermutungen anstellen",zh:"嘗試解釋現象、提出假設"},
-    {id:"NUT13",de:"Eigene Experimente entwerfen",zh:"能自行設計實驗"},
-    {id:"NUT14",de:"Erfahrungen aufzeichnen und dokumentieren",zh:"記錄觀察經驗"},
-    {id:"NUT15",de:"Einfache Ursache-Wirkungszusammenhänge kennen",zh:"理解簡單的因果關係"},
-    {id:"NUT16",de:"Ökologisches Grundverständnis entwickeln",zh:"建立基本的生態概念"},
-    {id:"NUT17",de:"Verantwortung für Pflanzen und Tiere übernehmen",zh:"對植物和動物負責任"},
-    {id:"NUT18",de:"Verantwortung für die Natur übernehmen",zh:"對自然環境負責"},
-    {id:"NUT19",de:"Ursachen und Folgen für Umweltverschmutzung kennen",zh:"了解環境污染的原因與後果"},
-    {id:"NUT20",de:"Gefahren beim Umgang mit Natur und Technik kennen",zh:"認識接觸自然和技術時的安全危險"}
+  {id:"NUT",de:"Natur · Umwelt · Technik",zh:"自然・環境・技術",cn:"自然・环境・技术",keywords:["natur","tier","pflanz","technik","experiment","forschen","wetter","jahreszeit","umwelt","bauen","自然","動物","植物","技術","實驗","探究","天氣","季節","環境","建造"],items:[
+    {id:"NUT01",de:"Neugierig und aufmerksam sein, Interesse an seiner Umwelt zeigen",zh:"對環境充滿好奇心，對動植物、科技、自然現象感興趣",cn:"对环境充满好奇心，对动植物、科技、自然现象感兴趣"},
+    {id:"NUT02",de:"Dazu Fragen stellen",zh:"主動提問",cn:"主动提问"},
+    {id:"NUT03",de:"Mit Freude und Ausdauer Dinge untersuchen – allein oder in der Gruppe",zh:"獨自或與他人一起持續探索事物",cn:"独自或与他人一起持续探索事物"},
+    {id:"NUT04",de:"Naturbegriffe kennen (Tiere, Pflanzen)",zh:"認識自然相關詞彙（動植物）",cn:"认识自然相关词汇（动植物）"},
+    {id:"NUT05",de:"Dinge aus der Natur nach Kategorien ordnen",zh:"對自然物品進行分類整理",cn:"对自然物品进行分类整理"},
+    {id:"NUT06",de:"Fundstücke aus der Natur sammeln",zh:"收集自然物品",cn:"收集自然物品"},
+    {id:"NUT07",de:"Naturereignisse kennen (Wetter, Jahreszeiten)",zh:"認識天氣與四季等自然現象",cn:"认识天气与四季等自然现象"},
+    {id:"NUT08",de:"Technische Einrichtungen kennen",zh:"認識生活中的技術設施",cn:"认识生活中的技术设施"},
+    {id:"NUT09",de:"Technische Geräte bedienen können",zh:"能操作技術設備",cn:"能操作技术设备"},
+    {id:"NUT10",de:"Bauwerke oder Maschinen konstruieren",zh:"能建造或組裝結構與機器",cn:"能建造或组装结构与机器"},
+    {id:"NUT11",de:"Lust am Forschen und Experimentieren",zh:"喜歡探究和實驗",cn:"喜欢探究和实验"},
+    {id:"NUT12",de:"Erklärungsversuche machen, Vermutungen anstellen",zh:"嘗試解釋現象、提出假設",cn:"尝试解释现象、提出假设"},
+    {id:"NUT13",de:"Eigene Experimente entwerfen",zh:"能自行設計實驗",cn:"能自行设计实验"},
+    {id:"NUT14",de:"Erfahrungen aufzeichnen und dokumentieren",zh:"記錄觀察經驗",cn:"记录观察经验"},
+    {id:"NUT15",de:"Einfache Ursache-Wirkungszusammenhänge kennen",zh:"理解簡單的因果關係",cn:"理解简单的因果关系"},
+    {id:"NUT16",de:"Ökologisches Grundverständnis entwickeln",zh:"建立基本的生態概念",cn:"建立基本的生态概念"},
+    {id:"NUT17",de:"Verantwortung für Pflanzen und Tiere übernehmen",zh:"對植物和動物負責任",cn:"对植物和动物负责任"},
+    {id:"NUT18",de:"Verantwortung für die Natur übernehmen",zh:"對自然環境負責",cn:"对自然环境负责"},
+    {id:"NUT19",de:"Ursachen und Folgen für Umweltverschmutzung kennen",zh:"了解環境污染的原因與後果",cn:"了解环境污染的原因与后果"},
+    {id:"NUT20",de:"Gefahren beim Umgang mit Natur und Technik kennen",zh:"認識接觸自然和技術時的安全危險",cn:"认识接触自然和技术时的安全危险"}
   ]},
-  {id:"SOZ",de:"Soziales · Kulturelles Leben · Emotionales Verhalten",zh:"社會文化生活與情緒行為",keywords:["spiel","freund","teilen","hilf","tröst","gefühl","emotion","regel","konflikt","gruppe","社交","朋友","分享","幫助","安慰","感受","情緒","規則","衝突","團體","合作"],items:[
-    {id:"SOZ01",de:"Lachen, lautieren, Blickkontakt halten",zh:"微笑、發聲、保持眼神接觸"},
-    {id:"SOZ02",de:"Neugierig und offen sein",zh:"好奇心強、開放"},
-    {id:"SOZ03",de:"Bring- und Abholsituation bewältigen",zh:"能適應接送情況"},
-    {id:"SOZ04",de:"Begrüßung und Verabschiedung verstehen, winken",zh:"理解問候和道別，會揮手"},
-    {id:"SOZ05",de:"Die Bedeutung von 'nein' verstehen",zh:"理解「不」的含義"},
-    {id:"SOZ06",de:"Mit anderen am Tisch sitzen",zh:"能與他人同坐一桌"},
-    {id:"SOZ07",de:"An Kinderreimen, Fingerspielen, rhythmischen Spielen teilnehmen",zh:"參與童謠、手指遊戲、節奏遊戲"},
-    {id:"SOZ08",de:"An von Erwachsenen geleiteten Spielen teilnehmen",zh:"參與由成人引導的遊戲"},
-    {id:"SOZ09",de:"Parallel spielen",zh:"平行遊戲"},
-    {id:"SOZ10",de:"Miteinander spielen: sozialen Kontakt beginnen und beenden",zh:"能主動開始、維持和結束社交互動"},
-    {id:"SOZ11",de:"Kompromisse mit Hilfe von Erwachsenen schließen",zh:"在成人協助下達成妥協"},
-    {id:"SOZ12",de:"Spielsachen mit anderen teilen",zh:"能與他人分享玩具"},
-    {id:"SOZ13",de:"Warten können bis es dran ist",zh:"能等待輪到自己"},
-    {id:"SOZ14",de:"Sich alleine beschäftigen können",zh:"能獨立自娛"},
-    {id:"SOZ15",de:"Rollenspiele planen und durchführen",zh:"計劃並執行角色扮演遊戲"},
-    {id:"SOZ16",de:"Bei häuslichen Tätigkeiten mithelfen",zh:"協助家務、模仿成人行為"},
-    {id:"SOZ17",de:"Um Hilfe bitten können",zh:"能開口求助"},
-    {id:"SOZ18",de:"Verantwortungsgefühl für sich selbst haben",zh:"對自己和自己物品有責任感"},
-    {id:"SOZ19",de:"Sich bei täglichen Ärgernissen beruhigen lassen",zh:"在日常小困擾後能被安撫"},
-    {id:"SOZ20",de:"Emotionen selbst regulieren können",zh:"能自我調節情緒"},
-    {id:"SOZ21",de:"Bedürfnisse, Interessen und Gefühle ausdrücken",zh:"能表達自己的需求、興趣和感受"},
-    {id:"SOZ22",de:"Selbstvertrauen entwickeln",zh:"有自信，相信自己的能力"},
-    {id:"SOZ23",de:"Stolz auf sich sein",zh:"對自己感到驕傲"},
-    {id:"SOZ24",de:"Wissen, dass 'nein' sagen richtig ist",zh:"知道說「不」來保護自己是正確的"},
-    {id:"SOZ25",de:"Ein 'nein' akzeptieren",zh:"能接受他人說「不」"},
-    {id:"SOZ26",de:"Gefühle anderer wahrnehmen und achten",zh:"能察覺並尊重他人的感受"},
-    {id:"SOZ27",de:"Eigene Familie und Familienkultur kennen",zh:"了解自己的家庭和家庭文化"},
-    {id:"SOZ28",de:"Eigene Adresse kennen",zh:"知道自己的住址"},
-    {id:"SOZ29",de:"Sich zur Kitagruppe zugehörig fühlen",zh:"對幼兒園團體有歸屬感"},
-    {id:"SOZ30",de:"Gemeinsamkeiten und Unterschiede wahrnehmen",zh:"能察覺自己與他人的異同"},
-    {id:"SOZ31",de:"Zusammenarbeiten, von anderen lernen",zh:"能合作，向他人學習"},
-    {id:"SOZ32",de:"Regeln des Zusammenlebens kennen",zh:"了解並遵守共同生活規則"},
-    {id:"SOZ33",de:"Sicheres Verhalten im Straßenverkehr",zh:"交通安全行為"},
-    {id:"SOZ34",de:"Gefühle mit Worten beschreiben können",zh:"能用語言描述感受"},
-    {id:"SOZ35",de:"Sich an Regelspielen beteiligen",zh:"參與規則遊戲"},
-    {id:"SOZ36",de:"Im Spiel verlieren können",zh:"能接受在遊戲中輸"},
-    {id:"SOZ37",de:"Über unerfreuliche Ereignisse berichten",zh:"能談論不愉快的經歷"},
-    {id:"SOZ38",de:"Eigene Fehler zugeben können",zh:"能承認自己的錯誤"},
-    {id:"SOZ39",de:"Einfühlungsvermögen – 'Entschuldigung' meinen",zh:"培養同理心，真正理解「對不起」"},
-    {id:"SOZ40",de:"Mitgefühl mit traurigen Kindern zeigen",zh:"對難過的孩子表現同情與安慰"},
-    {id:"SOZ41",de:"Konflikte aushandeln und Kompromisse schließen",zh:"能協商衝突並達成妥協"},
-    {id:"SOZ42",de:"Empathisch zuhören, sich einfühlen",zh:"有同理行為：傾聽他人、設身處地"},
-    {id:"SOZ43",de:"Verschiedenheit von Menschen anerkennen",zh:"接受人與人之間的差異"},
-    {id:"SOZ44",de:"Kinderrechte kennen und für sich eintreten",zh:"了解兒童權利並敢於維護"},
-    {id:"SOZ45",de:"Eingreifen, wenn jemand geärgert wird",zh:"當有人受欺負時敢於介入"}
+  {id:"SOZ",de:"Soziales · Kulturelles Leben · Emotionales Verhalten",zh:"社會文化生活與情緒行為",cn:"社会文化生活与情绪行为",keywords:["spiel","freund","teilen","hilf","tröst","gefühl","emotion","regel","konflikt","gruppe","社交","朋友","分享","幫助","安慰","感受","情緒","規則","衝突","團體","合作"],items:[
+    {id:"SOZ01",de:"Lachen, lautieren, Blickkontakt halten",zh:"微笑、發聲、保持眼神接觸",cn:"微笑、发声、保持眼神接触"},
+    {id:"SOZ02",de:"Neugierig und offen sein",zh:"好奇心強、開放",cn:"好奇心强、开放"},
+    {id:"SOZ03",de:"Bring- und Abholsituation bewältigen",zh:"能適應接送情況",cn:"能适应接送情况"},
+    {id:"SOZ04",de:"Begrüßung und Verabschiedung verstehen, winken",zh:"理解問候和道別，會揮手",cn:"理解问候和道别，会挥手"},
+    {id:"SOZ05",de:"Die Bedeutung von 'nein' verstehen",zh:"理解「不」的含義",cn:"理解「不」的含义"},
+    {id:"SOZ06",de:"Mit anderen am Tisch sitzen",zh:"能與他人同坐一桌",cn:"能与他人同坐一桌"},
+    {id:"SOZ07",de:"An Kinderreimen, Fingerspielen, rhythmischen Spielen teilnehmen",zh:"參與童謠、手指遊戲、節奏遊戲",cn:"参与童谣、手指游戏、节奏游戏"},
+    {id:"SOZ08",de:"An von Erwachsenen geleiteten Spielen teilnehmen",zh:"參與由成人引導的遊戲",cn:"参与由成人引导的游戏"},
+    {id:"SOZ09",de:"Parallel spielen",zh:"平行遊戲",cn:"平行游戏"},
+    {id:"SOZ10",de:"Miteinander spielen: sozialen Kontakt beginnen und beenden",zh:"能主動開始、維持和結束社交互動",cn:"能主动开始、维持和结束社交互动"},
+    {id:"SOZ11",de:"Kompromisse mit Hilfe von Erwachsenen schließen",zh:"在成人協助下達成妥協",cn:"在成人协助下达成妥协"},
+    {id:"SOZ12",de:"Spielsachen mit anderen teilen",zh:"能與他人分享玩具",cn:"能与他人分享玩具"},
+    {id:"SOZ13",de:"Warten können bis es dran ist",zh:"能等待輪到自己",cn:"能等待轮到自己"},
+    {id:"SOZ14",de:"Sich alleine beschäftigen können",zh:"能獨立自娛",cn:"能独立自娱"},
+    {id:"SOZ15",de:"Rollenspiele planen und durchführen",zh:"計劃並執行角色扮演遊戲",cn:"计划并执行角色扮演游戏"},
+    {id:"SOZ16",de:"Bei häuslichen Tätigkeiten mithelfen",zh:"協助家務、模仿成人行為",cn:"协助家务、模仿成人行为"},
+    {id:"SOZ17",de:"Um Hilfe bitten können",zh:"能開口求助",cn:"能开口求助"},
+    {id:"SOZ18",de:"Verantwortungsgefühl für sich selbst haben",zh:"對自己和自己物品有責任感",cn:"对自己和自己物品有责任感"},
+    {id:"SOZ19",de:"Sich bei täglichen Ärgernissen beruhigen lassen",zh:"在日常小困擾後能被安撫",cn:"在日常小困扰后能被安抚"},
+    {id:"SOZ20",de:"Emotionen selbst regulieren können",zh:"能自我調節情緒",cn:"能自我调节情绪"},
+    {id:"SOZ21",de:"Bedürfnisse, Interessen und Gefühle ausdrücken",zh:"能表達自己的需求、興趣和感受",cn:"能表达自己的需求、兴趣和感受"},
+    {id:"SOZ22",de:"Selbstvertrauen entwickeln",zh:"有自信，相信自己的能力",cn:"有自信，相信自己的能力"},
+    {id:"SOZ23",de:"Stolz auf sich sein",zh:"對自己感到驕傲",cn:"对自己感到骄傲"},
+    {id:"SOZ24",de:"Wissen, dass 'nein' sagen richtig ist",zh:"知道說「不」來保護自己是正確的",cn:"知道说「不」来保护自己是正确的"},
+    {id:"SOZ25",de:"Ein 'nein' akzeptieren",zh:"能接受他人說「不」",cn:"能接受他人说「不」"},
+    {id:"SOZ26",de:"Gefühle anderer wahrnehmen und achten",zh:"能察覺並尊重他人的感受",cn:"能察觉并尊重他人的感受"},
+    {id:"SOZ27",de:"Eigene Familie und Familienkultur kennen",zh:"了解自己的家庭和家庭文化",cn:"了解自己的家庭和家庭文化"},
+    {id:"SOZ28",de:"Eigene Adresse kennen",zh:"知道自己的住址",cn:"知道自己的住址"},
+    {id:"SOZ29",de:"Sich zur Kitagruppe zugehörig fühlen",zh:"對幼兒園團體有歸屬感",cn:"对幼儿园团体有归属感"},
+    {id:"SOZ30",de:"Gemeinsamkeiten und Unterschiede wahrnehmen",zh:"能察覺自己與他人的異同",cn:"能察觉自己与他人的异同"},
+    {id:"SOZ31",de:"Zusammenarbeiten, von anderen lernen",zh:"能合作，向他人學習",cn:"能合作，向他人学习"},
+    {id:"SOZ32",de:"Regeln des Zusammenlebens kennen",zh:"了解並遵守共同生活規則",cn:"了解并遵守共同生活规则"},
+    {id:"SOZ33",de:"Sicheres Verhalten im Straßenverkehr",zh:"交通安全行為",cn:"交通安全行为"},
+    {id:"SOZ34",de:"Gefühle mit Worten beschreiben können",zh:"能用語言描述感受",cn:"能用语言描述感受"},
+    {id:"SOZ35",de:"Sich an Regelspielen beteiligen",zh:"參與規則遊戲",cn:"参与规则游戏"},
+    {id:"SOZ36",de:"Im Spiel verlieren können",zh:"能接受在遊戲中輸",cn:"能接受在游戏中输"},
+    {id:"SOZ37",de:"Über unerfreuliche Ereignisse berichten",zh:"能談論不愉快的經歷",cn:"能谈论不愉快的经历"},
+    {id:"SOZ38",de:"Eigene Fehler zugeben können",zh:"能承認自己的錯誤",cn:"能承认自己的错误"},
+    {id:"SOZ39",de:"Einfühlungsvermögen – 'Entschuldigung' meinen",zh:"培養同理心，真正理解「對不起」",cn:"培养同理心，真正理解「对不起」"},
+    {id:"SOZ40",de:"Mitgefühl mit traurigen Kindern zeigen",zh:"對難過的孩子表現同情與安慰",cn:"对难过的孩子表现同情与安慰"},
+    {id:"SOZ41",de:"Konflikte aushandeln und Kompromisse schließen",zh:"能協商衝突並達成妥協",cn:"能协商冲突并达成妥协"},
+    {id:"SOZ42",de:"Empathisch zuhören, sich einfühlen",zh:"有同理行為：傾聽他人、設身處地",cn:"有同理行为：倾听他人、设身处地"},
+    {id:"SOZ43",de:"Verschiedenheit von Menschen anerkennen",zh:"接受人與人之間的差異",cn:"接受人与人之间的差异"},
+    {id:"SOZ44",de:"Kinderrechte kennen und für sich eintreten",zh:"了解兒童權利並敢於維護",cn:"了解儿童权利并敢于维护"},
+    {id:"SOZ45",de:"Eingreifen, wenn jemand geärgert wird",zh:"當有人受欺負時敢於介入",cn:"当有人受欺负时敢于介入"}
   ]},
-  {id:"MAT",de:"Mathematik",zh:"數學",keywords:["zahl","zählen","form","groß","klein","mehr","weniger","menge","muster","sort","geomet","數字","數數","形狀","大","小","多","少","數量","圖案","排序"],items:[
-    {id:"MAT01",de:"Objektpermanenz verstehen",zh:"理解物體恆存"},
-    {id:"MAT02",de:"Freude am Sortieren, Muster legen",zh:"喜歡排序和製作圖案"},
-    {id:"MAT03",de:"Groß/Klein, keine/viele verstehen",zh:"理解大/小、沒有/很多"},
-    {id:"MAT04",de:"Interesse an Zahlen zeigen",zh:"對數字感興趣"},
-    {id:"MAT05",de:"Sein Alter kennen",zh:"知道自己的年齡"},
-    {id:"MAT06",de:"Mathematik in sozialen Situationen nutzen",zh:"用數學概念處理社交情境"},
-    {id:"MAT07",de:"Größen- und Mengenvergleich",zh:"比較大小與數量"},
-    {id:"MAT08",de:"Anzahl der Körperteile kennen",zh:"知道身體各部位的數量"},
-    {id:"MAT09",de:"Zählen können",zh:"能數數"},
-    {id:"MAT10",de:"Stück-für-Stück Zuordnung beim Zählen",zh:"一對一對應點數"},
-    {id:"MAT11",de:"Mengenverständnis",zh:"理解數量概念"},
-    {id:"MAT12",de:"Mengen vergleichen (mehr, weniger, gleich viel)",zh:"比較數量（多、少、一樣多）"},
-    {id:"MAT13",de:"Addieren können",zh:"能做加法"},
-    {id:"MAT14",de:"Kardinal- und Ordinalzahlen kennen",zh:"認識基數和序數"},
-    {id:"MAT15",de:"Eigene Hausnummer kennen",zh:"知道自己的門牌號碼"},
-    {id:"MAT16",de:"Dinge nach Form, Größe, Farbe ordnen",zh:"按形狀、大小、顏色分類排序"},
-    {id:"MAT17",de:"Zeit- und Maßeinheiten kennen",zh:"認識時間和量度單位"},
-    {id:"MAT18",de:"Messgeräte kennen (Uhr, Waage, Kalender)",zh:"認識測量工具"},
-    {id:"MAT19",de:"Den eigenen Geburtstag kennen",zh:"知道自己的生日"},
-    {id:"MAT20",de:"Geometrische Formen kennen",zh:"認識幾何圖形"},
-    {id:"MAT21",de:"Zeitverständnis entwickeln",zh:"建立時間概念"},
-    {id:"MAT22",de:"Verständnis von Gewicht entwickeln",zh:"建立重量概念"},
-    {id:"MAT23",de:"Verständnis im Umgang mit Geld entwickeln",zh:"建立金錢使用概念"},
-    {id:"MAT24",de:"Grundkenntnisse Computernutzung",zh:"具備基本電腦使用知識"},
-    {id:"MAT25",de:"Interesse an Rätseln und Denkaufgaben",zh:"喜歡謎題和思考任務"},
-    {id:"MAT26",de:"Zahlensymbole kennen",zh:"認識數字符號"},
-    {id:"MAT27",de:"Subtrahieren können",zh:"能做減法"}
+  {id:"MAT",de:"Mathematik",zh:"數學",cn:"数学",keywords:["zahl","zählen","form","groß","klein","mehr","weniger","menge","muster","sort","geomet","數字","數數","形狀","大","小","多","少","數量","圖案","排序"],items:[
+    {id:"MAT01",de:"Objektpermanenz verstehen",zh:"理解物體恆存",cn:"理解物体恒存"},
+    {id:"MAT02",de:"Freude am Sortieren, Muster legen",zh:"喜歡排序和製作圖案",cn:"喜欢排序和制作图案"},
+    {id:"MAT03",de:"Groß/Klein, keine/viele verstehen",zh:"理解大/小、沒有/很多",cn:"理解大/小、没有/很多"},
+    {id:"MAT04",de:"Interesse an Zahlen zeigen",zh:"對數字感興趣",cn:"对数字感兴趣"},
+    {id:"MAT05",de:"Sein Alter kennen",zh:"知道自己的年齡",cn:"知道自己的年龄"},
+    {id:"MAT06",de:"Mathematik in sozialen Situationen nutzen",zh:"用數學概念處理社交情境",cn:"用数学概念处理社交情境"},
+    {id:"MAT07",de:"Größen- und Mengenvergleich",zh:"比較大小與數量",cn:"比较大小与数量"},
+    {id:"MAT08",de:"Anzahl der Körperteile kennen",zh:"知道身體各部位的數量",cn:"知道身体各部位的数量"},
+    {id:"MAT09",de:"Zählen können",zh:"能數數",cn:"能数数"},
+    {id:"MAT10",de:"Stück-für-Stück Zuordnung beim Zählen",zh:"一對一對應點數",cn:"一对一对应点数"},
+    {id:"MAT11",de:"Mengenverständnis",zh:"理解數量概念",cn:"理解数量概念"},
+    {id:"MAT12",de:"Mengen vergleichen (mehr, weniger, gleich viel)",zh:"比較數量（多、少、一樣多）",cn:"比较数量（多、少、一样多）"},
+    {id:"MAT13",de:"Addieren können",zh:"能做加法",cn:"能做加法"},
+    {id:"MAT14",de:"Kardinal- und Ordinalzahlen kennen",zh:"認識基數和序數",cn:"认识基数和序数"},
+    {id:"MAT15",de:"Eigene Hausnummer kennen",zh:"知道自己的門牌號碼",cn:"知道自己的门牌号码"},
+    {id:"MAT16",de:"Dinge nach Form, Größe, Farbe ordnen",zh:"按形狀、大小、顏色分類排序",cn:"按形状、大小、颜色分类排序"},
+    {id:"MAT17",de:"Zeit- und Maßeinheiten kennen",zh:"認識時間和量度單位",cn:"认识时间和量度单位"},
+    {id:"MAT18",de:"Messgeräte kennen (Uhr, Waage, Kalender)",zh:"認識測量工具",cn:"认识测量工具"},
+    {id:"MAT19",de:"Den eigenen Geburtstag kennen",zh:"知道自己的生日",cn:"知道自己的生日"},
+    {id:"MAT20",de:"Geometrische Formen kennen",zh:"認識幾何圖形",cn:"认识几何图形"},
+    {id:"MAT21",de:"Zeitverständnis entwickeln",zh:"建立時間概念",cn:"建立时间概念"},
+    {id:"MAT22",de:"Verständnis von Gewicht entwickeln",zh:"建立重量概念",cn:"建立重量概念"},
+    {id:"MAT23",de:"Verständnis im Umgang mit Geld entwickeln",zh:"建立金錢使用概念",cn:"建立金钱使用概念"},
+    {id:"MAT24",de:"Grundkenntnisse Computernutzung",zh:"具備基本電腦使用知識",cn:"具备基本电脑使用知识"},
+    {id:"MAT25",de:"Interesse an Rätseln und Denkaufgaben",zh:"喜歡謎題和思考任務",cn:"喜欢谜题和思考任务"},
+    {id:"MAT26",de:"Zahlensymbole kennen",zh:"認識數字符號",cn:"认识数字符号"},
+    {id:"MAT27",de:"Subtrahieren können",zh:"能做減法",cn:"能做减法"}
   ]},
-  {id:"GES",de:"Gesundheit · Motorik · Wahrnehmung",zh:"健康・動作・感知",keywords:["lauf","spring","klett","ball","gleichgewicht","essen","körper","健康","跑","跳","爬","球","平衡","吃","身體","動作"],items:[
-    {id:"GES01",de:"Frei sitzen mit Gleichgewichtskontrolle",zh:"能安全地自行坐立並保持平衡"},
-    {id:"GES02",de:"Kriechen, robben oder krabbeln",zh:"能爬行"},
-    {id:"GES03",de:"Frei gehen und Gleichgewicht kontrollieren",zh:"能自由行走並控制平衡"},
-    {id:"GES04",de:"Dinge vom Boden aufheben",zh:"能從地上撿物品而不失去平衡"},
-    {id:"GES05",de:"Sicher laufen und dabei etwas tragen",zh:"能安全跑動並同時攜帶物品"},
-    {id:"GES06",de:"Treppen auf- und absteigen",zh:"能上下樓梯"},
-    {id:"GES07",de:"Einen Ball mit dem Fuß schießen",zh:"能用腳踢球"},
-    {id:"GES08",de:"Beidbeinig hüpfen und springen",zh:"能雙腳跳躍"},
-    {id:"GES09",de:"Über ein Hindernis springen",zh:"能跳過障礙物"},
-    {id:"GES10",de:"Rückwärts laufen",zh:"能向後跑"},
-    {id:"GES11",de:"Fahrzeuge sicher bewegen",zh:"能安全操控騎乘玩具"},
-    {id:"GES12",de:"Auf einem Bein stehen und hüpfen",zh:"能單腳站立和跳躍"},
-    {id:"GES13",de:"Auf Gerüste klettern",zh:"能攀爬架構"},
-    {id:"GES14",de:"Ball fangen",zh:"能接球"},
-    {id:"GES15",de:"Purzelbaum, Hampelmann, Schaukeln",zh:"能做前滾翻、跳躍操、盪鞦韆"},
-    {id:"GES16",de:"Bewegungssicherheit und Koordination entwickeln",zh:"發展動作安全感和協調能力"},
-    {id:"GES17",de:"Selbstständig mit Löffel essen, aus Tasse trinken",zh:"能獨立用湯匙吃飯、用杯子喝水"},
-    {id:"GES18",de:"Turm mit Klötzen bauen",zh:"能用積木堆塔"},
-    {id:"GES19",de:"Zeichnen und Schreibmaterial nutzen",zh:"使用繪畫和書寫工具"},
-    {id:"GES20",de:"Zähne putzen",zh:"刷牙"},
-    {id:"GES21",de:"Sich allein an- und ausziehen",zh:"能獨立穿脫衣物"},
-    {id:"GES22",de:"Mit Gabel essen, Knöpfe öffnen",zh:"能用叉子吃飯、打開鈕扣"},
-    {id:"GES23",de:"Beim Kneten Formen bilden",zh:"捏黏土時能塑形"},
-    {id:"GES24",de:"Mit Schere schneiden",zh:"能使用剪刀"},
-    {id:"GES25",de:"Stift mit Erwachsenengriff halten",zh:"能用成人握筆方式持筆"},
-    {id:"GES26",de:"Schleife binden, Knoten machen",zh:"能打結和綁蝴蝶結"},
-    {id:"GES27",de:"Akustische Reize erkennen und unterscheiden",zh:"能識別和區分聽覺刺激"},
-    {id:"GES28",de:"Visuelle Reize erkennen",zh:"能識別視覺刺激"},
-    {id:"GES29",de:"Gegenstände durch Fühlen identifizieren",zh:"能透過觸覺識別物品"},
-    {id:"GES30",de:"Gerüche und Geschmacksrichtungen erkennen",zh:"能識別氣味和味道"},
-    {id:"GES31",de:"Gleichgewicht und Richtungsverständnis",zh:"平衡感、空間和方向理解"},
-    {id:"GES32",de:"Körperteile und Organe benennen",zh:"認識自己的身體，能說出身體部位和器官"},
-    {id:"GES33",de:"Körpergrenzen vertreten und achten",zh:"能表達身體界限，尊重他人界限"},
-    {id:"GES34",de:"Positive Geschlechtsidentität, Intimsphäre",zh:"正向性別認同，有隱私意識"},
-    {id:"GES35",de:"Grundwissen über Sexualität und Körperfunktionen",zh:"基本的性知識和身體功能認識"},
-    {id:"GES36",de:"Grundverständnis Gesundheit und Krankheit",zh:"對健康與疾病有基本認識"},
-    {id:"GES37",de:"Grundverständnis für Hygiene entwickeln",zh:"建立基本衛生習慣"},
-    {id:"GES38",de:"Toilettenbesuch selbst bewältigen",zh:"能獨立上廁所"},
-    {id:"GES39",de:"Hunger und Sättigung einschätzen",zh:"能感知並表達飢餓、口渴和飽足感"},
-    {id:"GES40",de:"Gemeinsame Mahlzeiten genießen",zh:"享受共同用餐，能選擇食物"},
-    {id:"GES41",de:"Gesunde und ungesunde Lebensmittel unterscheiden",zh:"認識各種食物，區分健康與不健康食品"}
+  {id:"GES",de:"Gesundheit · Motorik · Wahrnehmung",zh:"健康・動作・感知",cn:"健康・动作・感知",keywords:["lauf","spring","klett","ball","gleichgewicht","essen","körper","健康","跑","跳","爬","球","平衡","吃","身體","動作"],items:[
+    {id:"GES01",de:"Frei sitzen mit Gleichgewichtskontrolle",zh:"能安全地自行坐立並保持平衡",cn:"能安全地自行坐立并保持平衡"},
+    {id:"GES02",de:"Kriechen, robben oder krabbeln",zh:"能爬行",cn:"能爬行"},
+    {id:"GES03",de:"Frei gehen und Gleichgewicht kontrollieren",zh:"能自由行走並控制平衡",cn:"能自由行走并控制平衡"},
+    {id:"GES04",de:"Dinge vom Boden aufheben",zh:"能從地上撿物品而不失去平衡",cn:"能从地上捡物品而不失去平衡"},
+    {id:"GES05",de:"Sicher laufen und dabei etwas tragen",zh:"能安全跑動並同時攜帶物品",cn:"能安全跑动并同时携带物品"},
+    {id:"GES06",de:"Treppen auf- und absteigen",zh:"能上下樓梯",cn:"能上下楼梯"},
+    {id:"GES07",de:"Einen Ball mit dem Fuß schießen",zh:"能用腳踢球",cn:"能用脚踢球"},
+    {id:"GES08",de:"Beidbeinig hüpfen und springen",zh:"能雙腳跳躍",cn:"能双脚跳跃"},
+    {id:"GES09",de:"Über ein Hindernis springen",zh:"能跳過障礙物",cn:"能跳过障碍物"},
+    {id:"GES10",de:"Rückwärts laufen",zh:"能向後跑",cn:"能向后跑"},
+    {id:"GES11",de:"Fahrzeuge sicher bewegen",zh:"能安全操控騎乘玩具",cn:"能安全操控骑乘玩具"},
+    {id:"GES12",de:"Auf einem Bein stehen und hüpfen",zh:"能單腳站立和跳躍",cn:"能单脚站立和跳跃"},
+    {id:"GES13",de:"Auf Gerüste klettern",zh:"能攀爬架構",cn:"能攀爬架构"},
+    {id:"GES14",de:"Ball fangen",zh:"能接球",cn:"能接球"},
+    {id:"GES15",de:"Purzelbaum, Hampelmann, Schaukeln",zh:"能做前滾翻、跳躍操、盪鞦韆",cn:"能做前滚翻、跳跃操、荡秋千"},
+    {id:"GES16",de:"Bewegungssicherheit und Koordination entwickeln",zh:"發展動作安全感和協調能力",cn:"发展动作安全感和协调能力"},
+    {id:"GES17",de:"Selbstständig mit Löffel essen, aus Tasse trinken",zh:"能獨立用湯匙吃飯、用杯子喝水",cn:"能独立用汤匙吃饭、用杯子喝水"},
+    {id:"GES18",de:"Turm mit Klötzen bauen",zh:"能用積木堆塔",cn:"能用积木堆塔"},
+    {id:"GES19",de:"Zeichnen und Schreibmaterial nutzen",zh:"使用繪畫和書寫工具",cn:"使用绘画和书写工具"},
+    {id:"GES20",de:"Zähne putzen",zh:"刷牙",cn:"刷牙"},
+    {id:"GES21",de:"Sich allein an- und ausziehen",zh:"能獨立穿脫衣物",cn:"能独立穿脱衣物"},
+    {id:"GES22",de:"Mit Gabel essen, Knöpfe öffnen",zh:"能用叉子吃飯、打開鈕扣",cn:"能用叉子吃饭、打开钮扣"},
+    {id:"GES23",de:"Beim Kneten Formen bilden",zh:"捏黏土時能塑形",cn:"捏黏土时能塑形"},
+    {id:"GES24",de:"Mit Schere schneiden",zh:"能使用剪刀",cn:"能使用剪刀"},
+    {id:"GES25",de:"Stift mit Erwachsenengriff halten",zh:"能用成人握筆方式持筆",cn:"能用成人握笔方式持笔"},
+    {id:"GES26",de:"Schleife binden, Knoten machen",zh:"能打結和綁蝴蝶結",cn:"能打结和绑蝴蝶结"},
+    {id:"GES27",de:"Akustische Reize erkennen und unterscheiden",zh:"能識別和區分聽覺刺激",cn:"能识别和区分听觉刺激"},
+    {id:"GES28",de:"Visuelle Reize erkennen",zh:"能識別視覺刺激",cn:"能识别视觉刺激"},
+    {id:"GES29",de:"Gegenstände durch Fühlen identifizieren",zh:"能透過觸覺識別物品",cn:"能通过触觉识别物品"},
+    {id:"GES30",de:"Gerüche und Geschmacksrichtungen erkennen",zh:"能識別氣味和味道",cn:"能识别气味和味道"},
+    {id:"GES31",de:"Gleichgewicht und Richtungsverständnis",zh:"平衡感、空間和方向理解",cn:"平衡感、空间和方向理解"},
+    {id:"GES32",de:"Körperteile und Organe benennen",zh:"認識自己的身體，能說出身體部位和器官",cn:"认识自己的身体，能说出身体部位和器官"},
+    {id:"GES33",de:"Körpergrenzen vertreten und achten",zh:"能表達身體界限，尊重他人界限",cn:"能表达身体界限，尊重他人界限"},
+    {id:"GES34",de:"Positive Geschlechtsidentität, Intimsphäre",zh:"正向性別認同，有隱私意識",cn:"正向性别认同，有隐私意识"},
+    {id:"GES35",de:"Grundwissen über Sexualität und Körperfunktionen",zh:"基本的性知識和身體功能認識",cn:"基本的性知识和身体功能认识"},
+    {id:"GES36",de:"Grundverständnis Gesundheit und Krankheit",zh:"對健康與疾病有基本認識",cn:"对健康与疾病有基本认识"},
+    {id:"GES37",de:"Grundverständnis für Hygiene entwickeln",zh:"建立基本衛生習慣",cn:"建立基本卫生习惯"},
+    {id:"GES38",de:"Toilettenbesuch selbst bewältigen",zh:"能獨立上廁所",cn:"能独立上厕所"},
+    {id:"GES39",de:"Hunger und Sättigung einschätzen",zh:"能感知並表達飢餓、口渴和飽足感",cn:"能感知并表达饥饿、口渴和饱足感"},
+    {id:"GES40",de:"Gemeinsame Mahlzeiten genießen",zh:"享受共同用餐，能選擇食物",cn:"享受共同用餐，能选择食物"},
+    {id:"GES41",de:"Gesunde und ungesunde Lebensmittel unterscheiden",zh:"認識各種食物，區分健康與不健康食品",cn:"认识各种食物，区分健康与不健康食品"}
   ]},
-  {id:"KUN",de:"Kunst · Musik · Theaterspiel",zh:"藝術・音樂・戲劇遊戲",keywords:["mal","zeichen","musik","sing","tanz","theater","basteln","farbe","kunst","畫","音樂","唱歌","跳舞","戲劇","手工","顏色","藝術","扮演"],items:[
-    {id:"KUN01",de:"Freude am künstlerischen Gestalten",zh:"喜歡藝術創作"},
-    {id:"KUN02",de:"Befindet sich in der Kritzelphase",zh:"處於塗鴉階段"},
-    {id:"KUN03",de:"Malt Menschen als Kopffüßler",zh:"畫蝌蚪人（頭腳人）"},
-    {id:"KUN04",de:"Malt ganzen Menschen",zh:"能畫完整的人物"},
-    {id:"KUN05",de:"Malt einzelne Elemente",zh:"能畫單一元素或表現"},
-    {id:"KUN06",de:"Malt Kombinationen und Kompositionen",zh:"能畫組合和構圖"},
-    {id:"KUN07",de:"Malt Erzählbilder aus Realität oder Fantasie",zh:"能畫有故事性的圖畫"},
-    {id:"KUN08",de:"Erklärt Zeichnungen mündlich",zh:"能口頭說明自己的畫作"},
-    {id:"KUN09",de:"Farben und Farbnuancen kennen",zh:"認識顏色和色調深淺"},
-    {id:"KUN10",de:"Gestaltungstechniken kennen und nutzen",zh:"認識並使用各種創作技法"},
-    {id:"KUN11",de:"Werkzeuge sachgerecht handhaben",zh:"能正確使用工具"},
-    {id:"KUN12",de:"Die eigenen Werke schätzen",zh:"重視自己的作品"},
-    {id:"KUN13",de:"Die Werke anderer schätzen und beschreiben",zh:"欣賞並描述他人的作品"},
-    {id:"KUN14",de:"Ästhetische Empfindungen ausdrücken",zh:"能表達審美感受"},
-    {id:"KUN15",de:"Interesse an Kunst und Kunstwerken",zh:"對藝術作品感興趣"},
-    {id:"KUN16",de:"Freude an Musik und Singen",zh:"喜歡音樂和歌唱"},
-    {id:"KUN17",de:"Freude an Bewegung zu Musik und Tanzen",zh:"喜歡隨音樂動作和跳舞"},
-    {id:"KUN18",de:"Freude dran, Töne produzieren",zh:"喜歡製造聲音"},
-    {id:"KUN19",de:"Stille und Lautstärken unterscheiden",zh:"能有意識地體驗並區分靜默與音量"},
-    {id:"KUN20",de:"Texte und Melodien von Liedern kennen",zh:"知道一些歌曲的歌詞和旋律"},
-    {id:"KUN21",de:"Beim Singen Melodie und Rhythmus halten",zh:"唱歌時能保持旋律和節奏"},
-    {id:"KUN22",de:"Rhythmus halten (Klatschen, Trommeln)",zh:"能保持節拍"},
-    {id:"KUN23",de:"Instrumente am Klang erkennen",zh:"能靠聲音辨認樂器"},
-    {id:"KUN24",de:"Freude am Theaterspiel und Verwandeln",zh:"喜歡扮演和戲劇遊戲"},
-    {id:"KUN25",de:"Eigene Geschichten szenisch darstellen",zh:"能將故事或經歷戲劇化表演"},
-    {id:"KUN26",de:"Als-Ob-Spiel: Fantasiewelten entwickeln",zh:"能用想像力創造「假裝世界」"},
-    {id:"KUN27",de:"Gemeinsam Szenen darstellen, kooperieren",zh:"能共同表演場景，合作配合"}
+  {id:"KUN",de:"Kunst · Musik · Theaterspiel",zh:"藝術・音樂・戲劇遊戲",cn:"艺术・音乐・戏剧游戏",keywords:["mal","zeichen","musik","sing","tanz","theater","basteln","farbe","kunst","畫","音樂","唱歌","跳舞","戲劇","手工","顏色","藝術","扮演"],items:[
+    {id:"KUN01",de:"Freude am künstlerischen Gestalten",zh:"喜歡藝術創作",cn:"喜欢艺术创作"},
+    {id:"KUN02",de:"Befindet sich in der Kritzelphase",zh:"處於塗鴉階段",cn:"处于涂鸦阶段"},
+    {id:"KUN03",de:"Malt Menschen als Kopffüßler",zh:"畫蝌蚪人（頭腳人）",cn:"画蝌蚪人（头脚人）"},
+    {id:"KUN04",de:"Malt ganzen Menschen",zh:"能畫完整的人物",cn:"能画完整的人物"},
+    {id:"KUN05",de:"Malt einzelne Elemente",zh:"能畫單一元素或表現",cn:"能画单一元素或表现"},
+    {id:"KUN06",de:"Malt Kombinationen und Kompositionen",zh:"能畫組合和構圖",cn:"能画组合和构图"},
+    {id:"KUN07",de:"Malt Erzählbilder aus Realität oder Fantasie",zh:"能畫有故事性的圖畫",cn:"能画有故事性的图画"},
+    {id:"KUN08",de:"Erklärt Zeichnungen mündlich",zh:"能口頭說明自己的畫作",cn:"能口头说明自己的画作"},
+    {id:"KUN09",de:"Farben und Farbnuancen kennen",zh:"認識顏色和色調深淺",cn:"认识颜色和色调深浅"},
+    {id:"KUN10",de:"Gestaltungstechniken kennen und nutzen",zh:"認識並使用各種創作技法",cn:"认识并使用各种创作技法"},
+    {id:"KUN11",de:"Werkzeuge sachgerecht handhaben",zh:"能正確使用工具",cn:"能正确使用工具"},
+    {id:"KUN12",de:"Die eigenen Werke schätzen",zh:"重視自己的作品",cn:"重视自己的作品"},
+    {id:"KUN13",de:"Die Werke anderer schätzen und beschreiben",zh:"欣賞並描述他人的作品",cn:"欣赏并描述他人的作品"},
+    {id:"KUN14",de:"Ästhetische Empfindungen ausdrücken",zh:"能表達審美感受",cn:"能表达审美感受"},
+    {id:"KUN15",de:"Interesse an Kunst und Kunstwerken",zh:"對藝術作品感興趣",cn:"对艺术作品感兴趣"},
+    {id:"KUN16",de:"Freude an Musik und Singen",zh:"喜歡音樂和歌唱",cn:"喜欢音乐和歌唱"},
+    {id:"KUN17",de:"Freude an Bewegung zu Musik und Tanzen",zh:"喜歡隨音樂動作和跳舞",cn:"喜欢随音乐动作和跳舞"},
+    {id:"KUN18",de:"Freude dran, Töne produzieren",zh:"喜歡製造聲音",cn:"喜欢制造声音"},
+    {id:"KUN19",de:"Stille und Lautstärken unterscheiden",zh:"能有意識地體驗並區分靜默與音量",cn:"能有意识地体验并区分静默与音量"},
+    {id:"KUN20",de:"Texte und Melodien von Liedern kennen",zh:"知道一些歌曲的歌詞和旋律",cn:"知道一些歌曲的歌词和旋律"},
+    {id:"KUN21",de:"Beim Singen Melodie und Rhythmus halten",zh:"唱歌時能保持旋律和節奏",cn:"唱歌时能保持旋律和节奏"},
+    {id:"KUN22",de:"Rhythmus halten (Klatschen, Trommeln)",zh:"能保持節拍",cn:"能保持节拍"},
+    {id:"KUN23",de:"Instrumente am Klang erkennen",zh:"能靠聲音辨認樂器",cn:"能靠声音辨认乐器"},
+    {id:"KUN24",de:"Freude am Theaterspiel und Verwandeln",zh:"喜歡扮演和戲劇遊戲",cn:"喜欢扮演和戏剧游戏"},
+    {id:"KUN25",de:"Eigene Geschichten szenisch darstellen",zh:"能將故事或經歷戲劇化表演",cn:"能将故事或经历戏剧化表演"},
+    {id:"KUN26",de:"Als-Ob-Spiel: Fantasiewelten entwickeln",zh:"能用想像力創造「假裝世界」",cn:"能用想象力创造「假装世界」"},
+    {id:"KUN27",de:"Gemeinsam Szenen darstellen, kooperieren",zh:"能共同表演場景，合作配合",cn:"能共同表演场景，合作配合"}
   ]},
-  {id:"SPR",de:"Sprache · Kommunikation",zh:"語言・溝通",missing:true,items:[],keywords:[]},
-  {id:"KOG",de:"Kognitive Entwicklung",zh:"認知發展",missing:true,items:[],keywords:[]}
+  {id:"SPR",de:"Sprache · Kommunikation",zh:"語言・溝通",cn:"语言・沟通",missing:true,items:[],keywords:[]},
+  {id:"KOG",de:"Kognitive Entwicklung",zh:"認知發展",cn:"认知发展",missing:true,items:[],keywords:[]}
 ];
 
 let lang='de';
@@ -452,7 +511,12 @@ let currentChild=null;
 let filter='all';
 let openSections={};
 
-function t(k){return TR[lang][k]||k}
+function t(k){return TR[lang][k]||TR['zh'][k]||k}
+
+function dl(domain){return dl(domain)||domain['zh'];}
+function il(item){return il(item)||item['zh'];}
+function ml(obj){return obj[lang]||obj['zh'];}
+
 
 // 設定預設期間：從今年9月1日到明年8月31日（德國學年）
 (function initPeriod(){
@@ -482,7 +546,7 @@ function formatDob(m,y){
 
 function setLang(l){
   lang=l;
-  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',(l==='de'&&b.textContent==='DE')||(l==='zh'&&b.textContent==='中文')));
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',(l==='de'&&b.textContent==='DE')||(l==='zh'&&b.textContent==='繁體')||(l==='cn'&&b.textContent==='简体')));
   buildMonths();applyLang();renderSections();
 }
 
@@ -611,7 +675,7 @@ function renderSections(){
     const header=document.createElement('div');header.className='section-header';
     header.onclick=()=>toggleSection(domain.id);
     const bc=dc>0&&dc===domain.items.length&&!domain.missing?'section-badge done':'section-badge';
-    header.innerHTML=`<span class="section-title">${domain[lang]}${domain.missing?' ⚠️':''}
+    header.innerHTML=`<span class="section-title">${dl(domain)}${domain.missing?' ⚠️':''}
       <span class="${bc}">${domain.missing?t('pending'):dc+'/'+domain.items.length}</span></span>
       <span class="chevron" style="transform:${isOpen?'rotate(180deg)':''}">⌄</span>`;
     card.appendChild(header);
@@ -628,7 +692,7 @@ function renderSections(){
         vis++;
         const row=document.createElement('div');row.className='item-row'+(isObs?' observed':'');
         const top=document.createElement('div');top.className='item-top';
-        top.innerHTML=`<div class="item-text">${item[lang]}${obs&&obs.date?'<div class="item-date">'+obs.date+'</div>':''}</div>
+        top.innerHTML=`<div class="item-text">${il(item)}${obs&&obs.date?'<div class="item-date">'+obs.date+'</div>':''}</div>
           <div class="item-controls">
             <button class="status-btn${obs&&obs.status==='ja'?' ja':''}" onclick="toggleStatus('${item.id}','ja')">✓</button>
             <button class="status-btn${obs&&obs.status==='manchmal'?' manchmal':''}" onclick="toggleStatus('${item.id}','manchmal')">~</button>
@@ -653,21 +717,75 @@ function renderSections(){
 }
 
 function doMatch(){
-  const input=document.getElementById('match-input').value.trim().toLowerCase();
+  const input=document.getElementById('match-input').value.trim();
   const resultEl=document.getElementById('match-result');
   if(!input){resultEl.style.display='none';return;}
+  const inputLower=input.toLowerCase();
+  // 中文每個字單獨比對，德文按空格拆詞
+  const words=inputLower.split(/\s+/).filter(w=>w.length>0);
+  const chars=[...input].filter(c=>/[\u4e00-\u9fff]/.test(c));
+  const tokens=[...new Set([...words,...chars])];
+
+  // 德文動詞原形對照（處理變化形）
+  const verbMap={
+    'helfen':['hilft','geholfen','helfen','hilf'],
+    'spielen':['spielt','gespielt','spielen'],
+    'teilen':['teilt','geteilt','teilen'],
+    'malen':['malt','gemalt','malen'],
+    'laufen':['läuft','gelaufen','laufen'],
+    'springen':['springt','gesprungen','springen'],
+    'klettern':['klettert','geklettert','klettern'],
+    'werfen':['wirft','geworfen','werfen'],
+    'fangen':['fängt','gefangen','fangen'],
+    'bauen':['baut','gebaut','bauen'],
+    'zeichnen':['zeichnet','gezeichnet','zeichnen'],
+    'singen':['singt','gesungen','singen'],
+    'tanzen':['tanzt','getanzt','tanzen'],
+    'kochen':['kocht','gekocht','kochen'],
+    'essen':['isst','gegessen','essen'],
+    'trinken':['trinkt','getrunken','trinken'],
+    'kennen':['kennt','gekannt','kennen'],
+    'verstehen':['versteht','verstanden','verstehen'],
+    'erkennen':['erkennt','erkannt','erkennen'],
+    'benennen':['benennt','benannt','benennen'],
+    'zählen':['zählt','gezählt','zählen'],
+    'sortieren':['sortiert','sortiert','sortieren'],
+    'ordnen':['ordnet','geordnet','ordnen'],
+    'sammeln':['sammelt','gesammelt','sammeln'],
+    'forschen':['forscht','geforscht','forschen'],
+    'experimentieren':['experimentiert','experimentiert','experimentieren'],
+    'beobachten':['beobachtet','beobachtet','beobachten'],
+    'regulieren':['reguliert','reguliert','regulieren'],
+    'ausdrücken':['drückt aus','ausgedrückt','ausdrücken'],
+    'warten':['wartet','gewartet','warten'],
+    'kooperieren':['kooperiert','kooperiert','kooperieren'],
+    'schneiden':['schneidet','geschnitten','schneiden'],
+    'kleben':['klebt','geklebt','kleben'],
+    'falten':['faltet','gefaltet','falten'],
+  };
+  // 展開搜尋詞：加入動詞原形的所有變化形
+  const expandedTokens=[...tokens];
+  tokens.forEach(tok=>{
+    Object.entries(verbMap).forEach(([base,forms])=>{
+      if(forms.includes(tok)||tok===base){
+        expandedTokens.push(base,...forms);
+      }
+    });
+  });
+  const finalTokens=[...new Set(expandedTokens)];
+
   const matches=[];
   DOMAINS.forEach(domain=>{
     if(domain.missing) return;
     domain.items.forEach(item=>{
-      const text=(item.de+' '+item.zh+' '+(domain.keywords||[]).join(' ')).toLowerCase();
-      const words=input.split(/\s+/);
-      const score=words.filter(w=>w.length>2&&text.includes(w)).length;
-      if(score>0) matches.push({domain:domain[lang],item:item[lang],score});
+      const fullText=(item.de+' '+il(item)).toLowerCase();
+      let score=0;
+      finalTokens.forEach(tok=>{if(tok.length>=2&&fullText.includes(tok)) score++;});
+      if(score>0) matches.push({domain:dl(domain),item:il(item),score});
     });
   });
   matches.sort((a,b)=>b.score-a.score);
-  const top=matches.slice(0,5);
+  const top=matches.slice(0,6);
   resultEl.style.display='block';
   if(!top.length){resultEl.innerHTML=`<div class="empty-state">${t('noMatch')}</div>`;return;}
   resultEl.innerHTML=top.map(m=>`<div class="match-item"><div class="match-domain">${m.domain}</div><div class="match-text">${m.item}</div></div>`).join('');
@@ -688,7 +806,7 @@ function generateReport(rl){
     // 期間篩選
     if(from&&o.date&&o.date<from) return;
     if(to&&o.date&&o.date>to) return;
-    observed.push({area:d[rl==='zh'?'zh':'de'],item:item[rl==='zh'?'zh':'de'],note:o.note,date:o.date||''});
+    observed.push({area:dl(d),item:il(item),note:o.note,date:o.date||''});
   }));
   const elId=rl==='de'?'report-de':'report-zh';
   const out=document.getElementById(elId);
@@ -697,9 +815,9 @@ function generateReport(rl){
   const grp={};
   observed.forEach(o=>{if(!grp[o.area]) grp[o.area]=[];grp[o.area].push(o);});
   const dob=formatDob(child.dobMonth,child.dobYear);
-  let text=TR[rl].reportIntro(child.name,dob,from,to);
-  Object.entries(grp).forEach(([area,items])=>{text+=TR[rl].reportSection(area,items)+'\n';});
-  text+=TR[rl].reportNote;
+  let text=TR[rl==='cn'?'cn':rl].reportIntro(child.name,dob,from,to);
+  Object.entries(grp).forEach(([area,items])=>{text+=TR[rl==='cn'?'cn':rl].reportSection(area,items)+'\n';});
+  text+=TR[rl==='cn'?'cn':rl].reportNote;
   out.textContent=text;
 }
 
@@ -720,7 +838,28 @@ function switchTab(tab){
   document.getElementById('panel-'+tab).classList.add('active');
 }
 
-function openAddChild(){document.getElementById('modal-bg').classList.add('open');}
+function confirmDeleteChild(){
+  if(!currentChild){alert(t('noChild'));return;}
+  document.getElementById('modal-delete-title').textContent=TR[lang].deleteTitle;
+  document.getElementById('modal-delete-msg').textContent=TR[lang].deleteMsg(currentChild.name);
+  document.getElementById('btn-delete-cancel').textContent=TR[lang].deleteBtnCancel;
+  document.getElementById('btn-delete-confirm').textContent=TR[lang].deleteBtnConfirm;
+  document.getElementById('modal-delete-bg').classList.add('open');
+}
+function closeDeleteModal(){
+  document.getElementById('modal-delete-bg').classList.remove('open');
+}
+function deleteChild(){
+  if(!currentChild) return;
+  children=children.filter(c=>c.id!==currentChild.id);
+  delete observations[currentChild.id];
+  localStorage.setItem('kita_children',JSON.stringify(children));
+  localStorage.setItem('kita_obs',JSON.stringify(observations));
+  currentChild=null;
+  closeDeleteModal();
+  renderChildSelect();renderReportChildSelect();renderSections();updateStats();
+}
+
 function closeModal(){
   document.getElementById('modal-bg').classList.remove('open');
   document.getElementById('child-name-input').value='';
